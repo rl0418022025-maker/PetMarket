@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PetMarket.BusinessLogic/PetMarket.BusinessLogic.csproj" />
+  <Project Path="PetMarket.DataAccess/PetMarket.DataAccess.csproj" />
+  <Project Path="PetMarket.Entities/PetMarket.Entities.csproj" />
+  <Project Path="PetMarket.View/PetMarket.View.csproj" />
+</Solution>
