@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PetMarket.DataAccess\PetMarket.DataAccess.csproj" />
+    <ProjectReference Include="..\PetMarket.Entities\PetMarket.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
