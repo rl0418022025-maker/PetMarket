@@ -1,37 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using PetMarket.DataAccess;
+﻿using PetMarket.DataAccess;
 using PetMarket.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace PetMarket.BusinessLogic
 {
     public class CategoriaBL
     {
-        private readonly CategoriaRepository _categoriaRepository;
+        private readonly CategoriaRepository _repository;
 
-        public CategoriaBL(CategoriaRepository categoriaRepository)
+        public CategoriaBL(CategoriaRepository repository)
         {
-            _categoriaRepository = categoriaRepository;
+            _repository = repository;
         }
 
-        public List<Categoria> ListarCategorias()
+        public List<Categoria> SelectAll()
         {
-            return _categoriaRepository.Obtenertodas();
+            List<Categoria> result = null;
+            try
+            {
+                result = _repository.SelectAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return result;
         }
 
-        public bool GuardarCategoria(Categoria categoria)
+        public int Insert(Categoria entity)
         {
-            if (string.IsNullOrWhiteSpace(categoria.Nombre))
+            int result;
+            try
             {
-                throw new ArgumentException("El nombre de la categoría es obligatorio.");
+                result = _repository.Insert(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
-            if (categoria.EstadoId <= 0)
-            {
-                categoria.EstadoId = 1; // 1 = Activo según la BD
-            }
-
-            return _categoriaRepository.Insertar(categoria);
+            return result;
         }
     }
 }

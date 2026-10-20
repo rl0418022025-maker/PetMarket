@@ -1,37 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using PetMarket.DataAccess;
+﻿using PetMarket.DataAccess;
 using PetMarket.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace PetMarket.BusinessLogic
 {
     public class ProductoBL
     {
-        private readonly ProductoRepository _productoRepository;
+        private readonly ProductoRepository _repository;
 
-        public ProductoBL(ProductoRepository productoRepository)
+        public ProductoBL(ProductoRepository repository)
         {
-            _productoRepository = productoRepository;
+            _repository = repository;
         }
 
-        public List<Producto> ListarProductos()
+        public List<Producto> SelectAll()
         {
-            return _productoRepository.Obtenertodos();
+            List<Producto> result = null;
+            try
+            {
+                result = _repository.SelectAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return result;
         }
 
-        public bool GuardarProducto(Producto producto)
+        public int Insert(Producto entity)
         {
-            if (string.IsNullOrWhiteSpace(producto.Nombre))
+            int result;
+            try
             {
-                throw new ArgumentException("El nombre del producto es obligatorio.");
+                result = _repository.Insert(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
-            if (producto.PrecioVenta <= 0)
-            {
-                throw new ArgumentException("El precio de venta debe ser mayor a cero.");
-            }
-
-            return _productoRepository.Insertar(producto);
+            return result;
         }
     }
 }

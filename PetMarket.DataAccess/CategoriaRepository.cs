@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -15,65 +15,55 @@ namespace PetMarket.DataAccess
             _connectionFactory = connectionFactory;
         }
 
-        public List<Categoria> Obtenertodas()
+        public List<Categoria> SelectAll()
         {
-            var lista = new List<Categoria>();
+            List<Categoria> result = null;
 
-            using (var connection = _connectionFactory.CreateConnection())
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                connection.Open();
-                using (var command = connection.CreateCommand())
+                using (SqlCommand cmd = new SqlCommand("spCategoriaSelectAll", conn))
                 {
-                    command.CommandText = "sp_ListarCategorias";
-                    command.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    using (var reader = command.ExecuteReader())
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        while (reader.Read())
+                        result = new List<Categoria>();
+
+                        while (dr.Read())
                         {
-                            lista.Add(new Categoria
-                            {
-                                CategoriaId = reader.GetInt32(reader.GetOrdinal("CategoriaId")),
-                                Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
-                                Descripcion = reader.IsDBNull(reader.GetOrdinal("Descripcion")) ? null : reader.GetString(reader.GetOrdinal("Descripcion")),
-                                EstadoId = reader.GetInt32(reader.GetOrdinal("EstadoId")),
-                                NombreEstado = reader.GetString(reader.GetOrdinal("NombreEstado"))
-                            });
+                            Categoria entity = new Categoria();
+                            entity.CategoriaId = dr.GetInt32(0);
+                            entity.Nombre = dr.GetString(1);
+                            entity.EstadoId = dr.GetInt32(2);
+
+                            result.Add(entity);
                         }
                     }
                 }
             }
-            return lista;
+
+            return result;
         }
 
-        public bool Insertar(Categoria categoria)
+        public int Insert(Categoria entity)
         {
-            using (var connection = _connectionFactory.CreateConnection())
+            int result = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                connection.Open();
-                using (var command = connection.CreateCommand())
+                using (SqlCommand cmd = new SqlCommand("spCategoriaInsert", conn))
                 {
-                    command.CommandText = "sp_InsertarCategoria";
-                    command.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
-                    var pNombre = command.CreateParameter();
-                    pNombre.ParameterName = "@Nombre";
-                    pNombre.Value = categoria.Nombre;
-                    command.Parameters.Add(pNombre);
-
-                    var pDesc = command.CreateParameter();
-                    pDesc.ParameterName = "@Descripcion";
-                    pDesc.Value = (object)categoria.Descripcion ?? DBNull.Value;
-                    command.Parameters.Add(pDesc);
-
-                    var pEstado = command.CreateParameter();
-                    pEstado.ParameterName = "@EstadoId";
-                    pEstado.Value = categoria.EstadoId;
-                    command.Parameters.Add(pEstado);
-
-                    return command.ExecuteNonQuery() > 0;
+                    conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+
+            return result;
         }
     }
 }
