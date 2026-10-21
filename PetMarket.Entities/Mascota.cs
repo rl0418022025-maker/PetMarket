@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities
 {
-    internal class Mascota
+    public class Mascota
     {
         public int MascotaId { get; set; }
         public string Nombre { get; set; }
