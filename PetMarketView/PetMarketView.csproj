@@ -8,4 +8,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PetMarket.BusinessLogic\PetMarket.BusinessLogic.csproj" />
+    <ProjectReference Include="..\PetMarket.DataAccess\PetMarket.DataAccess.csproj" />
+    <ProjectReference Include="..\PetMarket.Entities\PetMarket.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
