@@ -34,7 +34,6 @@
             btnLimpiar = new System.Windows.Forms.Button();
             btnEliminar = new System.Windows.Forms.Button();
             dgvProductos = new System.Windows.Forms.DataGridView();
-
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             SuspendLayout();
             // 
@@ -44,7 +43,7 @@
             lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             lblTitulo.Location = new System.Drawing.Point(260, 15);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new System.Drawing.Size(255, 32);
+            lblTitulo.Size = new System.Drawing.Size(260, 32);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "Gestión de Productos";
             // 
@@ -213,7 +212,7 @@
             Controls.Add(lblTitulo);
             Name = "FormProducto";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            Text = "Gestión de Productos";
+            Text = " ";
             Load += FormProducto_Load;
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
             ResumeLayout(false);
