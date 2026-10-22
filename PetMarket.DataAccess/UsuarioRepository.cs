@@ -1,60 +1,70 @@
 ﻿using Entities;
+using Microsoft.Data.SqlClient;
 using PetMarket.DataAccess;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace PetMarket.DataAccess
 {
     public class UsuarioRepository
     {
+        private readonly ConnectionFactory _connectionFactory;
+
+        public UsuarioRepository(ConnectionFactory connectionFactory)
+        {
+            _connectionFactory = connectionFactory;
+        }
+
         public List<Usuario> SelectAll()
         {
-            List<Usuario> result = new List<Usuario>();
-            using (var conexion = Conexion.ObtenerConexion())
+            List<Usuario> result = null;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                string query = "SELECT UsuarioId, NombreUsuario, Contraseña, EmpleadoId, RolId, EstadoId FROM Usuario";
-                using (var comando = new SqlCommand(query, conexion))
+                using (SqlCommand cmd = new SqlCommand("spUsuarioSelectAll", conn))
                 {
-                    using (var lector = comando.ExecuteReader())
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        while (lector.Read())
+                        result = new List<Usuario>();
+
+                        while (dr.Read())
                         {
-                            Usuario usuario = new Usuario
-                            {
-                                UsuarioId = Convert.ToInt32(lector["UsuarioId"]),
-                                NombreUsuario = lector["NombreUsuario"].ToString(),
-                                Contraseña = lector["Contraseña"].ToString(),
-                                EmpleadoId = Convert.ToInt32(lector["EmpleadoId"]),
-                                RolId = Convert.ToInt32(lector["RolId"]),
-                                EstadoId = Convert.ToInt32(lector["EstadoId"])
-                            };
-                            result.Add(usuario);
+                            Usuario entity = new Usuario();
+                            entity.UsuarioId = dr.GetInt32(0);
+                            entity.NombreUsuario = dr.GetString(1);
+                            entity.EmpleadoId = dr.GetInt32(2);
+                            entity.RolId = dr.GetInt32(2);
+
+                            result.Add(entity);
                         }
                     }
                 }
             }
+
             return result;
         }
 
         public int Insert(Usuario entity)
         {
             int result = 0;
-            using (var conexion = Conexion.ObtenerConexion())
-            {
-                string query = "INSERT INTO Usuario (NombreUsuario, Contraseña, EmpleadoId, RolId, EstadoId) VALUES (@NombreUsuario, @Contraseña, @EmpleadoId, @RolId, @EstadoId)";
-                using (var comando = new SqlCommand(query, conexion))
-                {
-                    comando.Parameters.AddWithValue("@NombreUsuario", entity.NombreUsuario);
-                    comando.Parameters.AddWithValue("@Contraseña", entity.Contraseña);
-                    comando.Parameters.AddWithValue("@EmpleadoId", entity.EmpleadoId);
-                    comando.Parameters.AddWithValue("@RolId", entity.RolId);
-                    comando.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
-                    result = comando.ExecuteNonQuery();
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spUsuarioInsert", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", entity.NombreUsuario);
+
+                    conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+
             return result;
         }
     }

@@ -1,56 +1,69 @@
 ﻿using Entities;
-using PetMarket.DataAccess;
+using Microsoft.Data.SqlClient;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace PetMarket.DataAccess
 {
     public class RolRepository
     {
+        private readonly ConnectionFactory _connectionFactory;
+
+        public RolRepository(ConnectionFactory connectionFactory)
+        {
+            _connectionFactory = connectionFactory;
+        }
+
         public List<Rol> SelectAll()
         {
-            List<Rol> result = new List<Rol>();
-            using (var conexion = Conexion.ObtenerConexion())
+            List<Rol> result = null;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                string query = "SELECT RolId, Nombre, Descripcion, EstadoId FROM Rol";
-                using (var comando = new SqlCommand(query, conexion))
+                using (SqlCommand cmd = new SqlCommand("spRolSelectAll", conn))
                 {
-                    using (var lector = comando.ExecuteReader())
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        while (lector.Read())
+                        result = new List<Rol>();
+
+                        while (dr.Read())
                         {
-                            Rol rol = new Rol
-                            {
-                                RolId = Convert.ToInt32(lector["RolId"]),
-                                Nombre = lector["Nombre"].ToString(),
-                                Descripcion = lector["Descripcion"] != DBNull.Value ? lector["Descripcion"].ToString() : null,
-                                EstadoId = Convert.ToInt32(lector["EstadoId"])
-                            };
-                            result.Add(rol);
+                            Rol entity = new Rol();
+                            entity.RolId = dr.GetInt32(0);
+                            entity.Nombre = dr.GetString(1);
+                            entity.EstadoId = dr.GetInt32(2);
+
+                            result.Add(entity);
                         }
                     }
                 }
             }
+
             return result;
         }
 
         public int Insert(Rol entity)
         {
             int result = 0;
-            using (var conexion = Conexion.ObtenerConexion())
-            {
-                string query = "INSERT INTO Rol (Nombre, Descripcion, EstadoId) VALUES (@Nombre, @Descripcion, @EstadoId)";
-                using (var comando = new SqlCommand(query, conexion))
-                {
-                    comando.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    comando.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
-                    comando.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
-                    result = comando.ExecuteNonQuery();
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spClienteInsert", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+
+                    conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+
             return result;
         }
     }
