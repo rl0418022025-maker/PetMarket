@@ -16,17 +16,17 @@ namespace PetMarket.BusinessLogic
 
         public List<Estado> SelectAll()
         {
-            List<Estado> result = null;
-            try
+            return _repository.SelectAll();
+        }
+
+        public int Insert(Estado entity)
+        {
+            if (string.IsNullOrWhiteSpace(entity.Nombre))
             {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
+                throw new ArgumentException("El nombre del estado es obligatorio.");
             }
 
-            return result;
+            return _repository.Insert(entity);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace PetMarketView
             btnLimpiar = new Button();
             dgvCategorias = new DataGridView();
             btnEliminar = new Button();
+            labelGestionCateg = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvCategorias).BeginInit();
             SuspendLayout();
             // 
@@ -56,15 +57,15 @@ namespace PetMarketView
             // 
             // txtNombre
             // 
-            txtNombre.Location = new Point(105, 80);
+            txtNombre.Location = new Point(104, 78);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(100, 23);
+            txtNombre.Size = new Size(291, 23);
             txtNombre.TabIndex = 1;
             // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(48, 126);
+            lblDescripcion.Location = new Point(44, 127);
             lblDescripcion.Name = "lblDescripcion";
             lblDescripcion.Size = new Size(69, 15);
             lblDescripcion.TabIndex = 2;
@@ -72,16 +73,16 @@ namespace PetMarketView
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(128, 127);
+            txtDescripcion.Location = new Point(119, 127);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(100, 23);
+            txtDescripcion.Size = new Size(267, 23);
             txtDescripcion.TabIndex = 3;
             // 
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(45, 174);
+            lblEstado.Location = new Point(44, 176);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 4;
@@ -90,7 +91,7 @@ namespace PetMarketView
             // cboEstado
             // 
             cboEstado.FormattingEnabled = true;
-            cboEstado.Location = new Point(107, 176);
+            cboEstado.Location = new Point(104, 173);
             cboEstado.Name = "cboEstado";
             cboEstado.Size = new Size(121, 23);
             cboEstado.TabIndex = 5;
@@ -135,11 +136,22 @@ namespace PetMarketView
             btnEliminar.UseVisualStyleBackColor = true;
             btnEliminar.Click += btnEliminar_Click;
             // 
+            // labelGestionCateg
+            // 
+            labelGestionCateg.AutoSize = true;
+            labelGestionCateg.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelGestionCateg.Location = new Point(253, 19);
+            labelGestionCateg.Name = "labelGestionCateg";
+            labelGestionCateg.Size = new Size(264, 32);
+            labelGestionCateg.TabIndex = 11;
+            labelGestionCateg.Text = "Gestión de Categorías";
+            // 
             // FormCategoria
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(labelGestionCateg);
             Controls.Add(btnEliminar);
             Controls.Add(dgvCategorias);
             Controls.Add(btnLimpiar);
@@ -170,5 +182,6 @@ namespace PetMarketView
         private Button btnLimpiar;
         private DataGridView dgvCategorias;
         private Button btnEliminar;
+        private Label labelGestionCateg;
     }
 }

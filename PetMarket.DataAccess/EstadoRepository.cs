@@ -35,10 +35,31 @@ namespace PetMarket.DataAccess
                             Estado entity = new Estado();
                             entity.EstadoId = dr.GetInt32(0);
                             entity.Nombre = dr.GetString(1);
+                            entity.Descripcion = dr.IsDBNull(2) ? string.Empty : dr.GetString(2);
 
                             result.Add(entity);
                         }
                     }
+                }
+            }
+
+            return result;
+        }
+
+        public int Insert(Estado entity)
+        {
+            int result = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spEstadoInsert", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
+
+                    conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
 
