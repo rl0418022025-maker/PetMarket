@@ -1,56 +1,69 @@
 ﻿using Entities;
-using PetMarket.DataAccess;
+using Microsoft.Data.SqlClient;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace PetMarket.DataAccess
 {
     public class TipoMascotaRepository
     {
+        private readonly ConnectionFactory _connectionFactory;
+
+        public TipoMascotaRepository(ConnectionFactory connectionFactory)
+        {
+            _connectionFactory = connectionFactory;
+        }
+
         public List<TipoMascota> SelectAll()
         {
-            List<TipoMascota> result = new List<TipoMascota>();
-            using (var conexion = Conexion.ObtenerConexion())
+            List<TipoMascota> result = null;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                string query = "SELECT TipoMascotaId, Especie, Descripcion, EstadoId FROM TipoMascota";
-                using (var comando = new SqlCommand(query, conexion))
+                using (SqlCommand cmd = new SqlCommand("spTipoMascotaSelectAll", conn))
                 {
-                    using (var lector = comando.ExecuteReader())
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        while (lector.Read())
+                        result = new List<TipoMascota>();
+
+                        while (dr.Read())
                         {
-                            TipoMascota tipoMascota = new TipoMascota
-                            {
-                                TipoMascotaId = Convert.ToInt32(lector["TipoMascotaId"]),
-                                Especie = lector["Especie"].ToString(),
-                                Descripcion = lector["Descripcion"] != DBNull.Value ? lector["Descripcion"].ToString() : null,
-                                EstadoId = Convert.ToInt32(lector["EstadoId"])
-                            };
-                            result.Add(tipoMascota);
+                            TipoMascota entity = new TipoMascota();
+                            entity.TipoMascotaId = dr.GetInt32(0);
+                            entity.Especie = dr.GetString(1);
+                            entity.EstadoId = dr.GetInt32(2);
+
+                            result.Add(entity);
                         }
                     }
                 }
             }
+
             return result;
         }
 
         public int Insert(TipoMascota entity)
         {
             int result = 0;
-            using (var conexion = Conexion.ObtenerConexion())
-            {
-                string query = "INSERT INTO TipoMascota (Especie, Descripcion, EstadoId) VALUES (@Especie, @Descripcion, @EstadoId)";
-                using (var comando = new SqlCommand(query, conexion))
-                {
-                    comando.Parameters.AddWithValue("@Especie", entity.Especie);
-                    comando.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
-                    comando.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
-                    result = comando.ExecuteNonQuery();
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spTipoMascotaInsert", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Especie);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+
+                    conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+
             return result;
         }
     }
