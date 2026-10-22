@@ -2,5 +2,5 @@
   <Project Path="PetMarket.BusinessLogic/PetMarket.BusinessLogic.csproj" />
   <Project Path="PetMarket.DataAccess/PetMarket.DataAccess.csproj" />
   <Project Path="PetMarket.Entities/PetMarket.Entities.csproj" />
-  <Project Path="PetMarket.View/PetMarket.View.csproj" />
+  <Project Path="PetMarketView/PetMarketView.csproj" Id="6298f3c6-6174-4436-b03a-312a3afb83a1" />
 </Solution>
