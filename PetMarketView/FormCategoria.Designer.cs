@@ -1,4 +1,8 @@
-﻿namespace PetMarketView
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace PetMarketView
 {
     partial class FormCategoria
     {
@@ -109,7 +113,7 @@
             btnLimpiar.TabIndex = 8;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = true;
-            btnLimpiar.Click += btnLimpiar_Click_1;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // dgvCategorias
             // 
@@ -129,6 +133,7 @@
             btnEliminar.TabIndex = 10;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = true;
+            btnEliminar.Click += btnEliminar_Click;
             // 
             // FormCategoria
             // 
@@ -146,7 +151,8 @@
             Controls.Add(txtNombre);
             Controls.Add(lblNombre);
             Name = "FormCategoria";
-            Text = "Form1";
+            Text = "Gestión de Categorías";
+            Load += FormCategoria_Load;
             ((System.ComponentModel.ISupportInitialize)dgvCategorias).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -35,8 +35,8 @@ namespace PetMarket.DataAccess
                             Producto entity = new Producto();
                             entity.ProductoId = dr.GetInt32(0);
                             entity.Nombre = dr.GetString(1);
-                            entity.Precio = dr.GetDecimal(2);
-                            entity.Stock = dr.GetInt32(3);
+                            entity.PrecioVenta = dr.GetDecimal(2);
+                            entity.StockMinimo = dr.GetInt32(3);
                             entity.CategoriaId = dr.GetInt32(4);
                             entity.MarcaId = dr.GetInt32(5);
                             entity.EstadoId = dr.GetInt32(6);
@@ -60,8 +60,8 @@ namespace PetMarket.DataAccess
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Precio", entity.Precio);
-                    cmd.Parameters.AddWithValue("@Stock", entity.Stock);
+                    cmd.Parameters.AddWithValue("@Precio", entity.PrecioVenta);
+                    cmd.Parameters.AddWithValue("@Stock", entity.StockMinimo);
                     cmd.Parameters.AddWithValue("@CategoriaId", entity.CategoriaId);
                     cmd.Parameters.AddWithValue("@MarcaId", entity.MarcaId);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
