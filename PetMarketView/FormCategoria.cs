@@ -1,8 +1,8 @@
 namespace PetMarketView
 {
-    public partial class Form1 : Form
+    public partial class FormCategoria : Form
     {
-        public Form1()
+        public FormCategoria()
         {
             InitializeComponent();
         }
