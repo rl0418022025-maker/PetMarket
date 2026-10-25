@@ -101,5 +101,10 @@ namespace PetMarketView
             if (cboEstado.Items.Count > 0) cboEstado.SelectedIndex = 0;
             txtNombre.Focus();
         }
+
+        private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

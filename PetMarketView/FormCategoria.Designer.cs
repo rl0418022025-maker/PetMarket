@@ -49,58 +49,63 @@ namespace PetMarketView
             // lblNombre
             // 
             lblNombre.AutoSize = true;
-            lblNombre.Location = new Point(44, 81);
+            lblNombre.Location = new Point(50, 108);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(54, 15);
+            lblNombre.Size = new Size(68, 20);
             lblNombre.TabIndex = 0;
             lblNombre.Text = "Nombre ";
             // 
             // txtNombre
             // 
-            txtNombre.Location = new Point(104, 78);
+            txtNombre.Location = new Point(119, 104);
+            txtNombre.Margin = new Padding(3, 4, 3, 4);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(291, 23);
+            txtNombre.Size = new Size(332, 27);
             txtNombre.TabIndex = 1;
             // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(44, 127);
+            lblDescripcion.Location = new Point(50, 169);
             lblDescripcion.Name = "lblDescripcion";
-            lblDescripcion.Size = new Size(69, 15);
+            lblDescripcion.Size = new Size(87, 20);
             lblDescripcion.TabIndex = 2;
             lblDescripcion.Text = "Descripcion";
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(119, 127);
+            txtDescripcion.Location = new Point(136, 169);
+            txtDescripcion.Margin = new Padding(3, 4, 3, 4);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(267, 23);
+            txtDescripcion.Size = new Size(305, 29);
             txtDescripcion.TabIndex = 3;
             // 
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(44, 176);
+            lblEstado.Location = new Point(50, 235);
             lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(42, 15);
+            lblEstado.Size = new Size(54, 20);
             lblEstado.TabIndex = 4;
             lblEstado.Text = "Estado";
             // 
             // cboEstado
             // 
             cboEstado.FormattingEnabled = true;
-            cboEstado.Location = new Point(104, 173);
+            cboEstado.Location = new Point(119, 231);
+            cboEstado.Margin = new Padding(3, 4, 3, 4);
             cboEstado.Name = "cboEstado";
-            cboEstado.Size = new Size(121, 23);
+            cboEstado.Size = new Size(138, 28);
             cboEstado.TabIndex = 5;
+            cboEstado.SelectedIndexChanged += cboEstado_SelectedIndexChanged;
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new Point(48, 256);
+            btnGuardar.Location = new Point(55, 341);
+            btnGuardar.Margin = new Padding(3, 4, 3, 4);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(75, 23);
+            btnGuardar.Size = new Size(86, 31);
             btnGuardar.TabIndex = 6;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = true;
@@ -108,9 +113,10 @@ namespace PetMarketView
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Location = new Point(360, 256);
+            btnLimpiar.Location = new Point(411, 341);
+            btnLimpiar.Margin = new Padding(3, 4, 3, 4);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(75, 23);
+            btnLimpiar.Size = new Size(86, 31);
             btnLimpiar.TabIndex = 8;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = true;
@@ -119,18 +125,21 @@ namespace PetMarketView
             // dgvCategorias
             // 
             dgvCategorias.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCategorias.Location = new Point(12, 299);
+            dgvCategorias.Location = new Point(14, 399);
+            dgvCategorias.Margin = new Padding(3, 4, 3, 4);
             dgvCategorias.Name = "dgvCategorias";
             dgvCategorias.ReadOnly = true;
+            dgvCategorias.RowHeadersWidth = 51;
             dgvCategorias.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCategorias.Size = new Size(765, 150);
+            dgvCategorias.Size = new Size(874, 200);
             dgvCategorias.TabIndex = 9;
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new Point(639, 256);
+            btnEliminar.Location = new Point(730, 341);
+            btnEliminar.Margin = new Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(75, 23);
+            btnEliminar.Size = new Size(86, 31);
             btnEliminar.TabIndex = 10;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = true;
@@ -140,17 +149,17 @@ namespace PetMarketView
             // 
             labelGestionCateg.AutoSize = true;
             labelGestionCateg.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelGestionCateg.Location = new Point(253, 19);
+            labelGestionCateg.Location = new Point(289, 25);
             labelGestionCateg.Name = "labelGestionCateg";
-            labelGestionCateg.Size = new Size(264, 32);
+            labelGestionCateg.Size = new Size(326, 41);
             labelGestionCateg.TabIndex = 11;
             labelGestionCateg.Text = "Gestión de Categorías";
             // 
             // FormCategoria
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
             Controls.Add(labelGestionCateg);
             Controls.Add(btnEliminar);
             Controls.Add(dgvCategorias);
@@ -162,6 +171,7 @@ namespace PetMarketView
             Controls.Add(lblDescripcion);
             Controls.Add(txtNombre);
             Controls.Add(lblNombre);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "FormCategoria";
             Text = "Gestión de Categorías";
             Load += FormCategoria_Load;
