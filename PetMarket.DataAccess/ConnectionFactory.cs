@@ -4,13 +4,9 @@ namespace PetMarket.DataAccess
 {
     public class ConnectionFactory
     {
-        private readonly string _connectionString;
-
-        public ConnectionFactory()
-        {
-            // Coloca aquí tu cadena de conexión a SQL Server
-            _connectionString = "Server=localhost;Database=PetMarketDB;Trusted_Connection=True;TrustServerCertificate=True;";
-        }
+        // Reemplaza 192.168.x.x con la IP de la laptop servidora
+        private readonly string _connectionString =
+            "Server=192.168.x.x,1433\\SQLEXPRESS02;Database=PetMarket;User Id=sa;Password=PetMarket123*;TrustServerCertificate=True;";
 
         public SqlConnection CreateConnection()
         {
