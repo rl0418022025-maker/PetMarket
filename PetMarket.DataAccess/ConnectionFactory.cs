@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace PetMarket.DataAccess
 {
@@ -8,8 +9,7 @@ namespace PetMarket.DataAccess
 
         public ConnectionFactory()
         {
-            // Coloca aquí tu cadena de conexión a SQL Server
-            _connectionString = "Server=localhost;Database=PetMarketDB;Trusted_Connection=True;TrustServerCertificate=True;";
+            _connectionString = @"Server=localhost\SQLEXPRESS;Database=PetMarket;User Id=sa;Password=PetMarket123*;TrustServerCertificate=True;Connection Timeout=10;";
         }
 
         public SqlConnection CreateConnection()

@@ -21,7 +21,7 @@ namespace PetMarket.DataAccess
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEstadoSelectAll", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_ListarEstados", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 

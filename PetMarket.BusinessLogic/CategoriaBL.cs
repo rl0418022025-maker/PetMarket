@@ -43,5 +43,20 @@ namespace PetMarket.BusinessLogic
 
             return result;
         }
+
+        public int Delete(int id)
+        {
+            int result;
+            try
+            {
+                result = _repository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return result;
+        }
     }
 }

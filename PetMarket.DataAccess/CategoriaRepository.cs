@@ -17,25 +17,29 @@ namespace PetMarket.DataAccess
 
         public List<Categoria> SelectAll()
         {
-            List<Categoria> result = null;
+            List<Categoria> result = new List<Categoria>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spCategoriaSelectAll", conn))
+                // Usamos el procedimiento sp_ListarCategorias que hace el JOIN con Estado
+                using (SqlCommand cmd = new SqlCommand("sp_ListarCategorias", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-                        result = new List<Categoria>();
-
                         while (dr.Read())
                         {
-                            Categoria entity = new Categoria();
-                            entity.CategoriaId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.EstadoId = dr.GetInt32(2);
+                            Categoria entity = new Categoria
+                            {
+                                CategoriaId = Convert.ToInt32(dr["CategoriaId"]),
+                                Nombre = dr["Nombre"].ToString(),
+                                Descripcion = dr["Descripcion"] != DBNull.Value ? dr["Descripcion"].ToString() : string.Empty,
+                                EstadoId = Convert.ToInt32(dr["EstadoId"]),
+                                // Leemos la columna devuelta por el INNER JOIN de SQL:
+                                NombreEstado = dr["NombreEstado"] != DBNull.Value ? dr["NombreEstado"].ToString() : string.Empty
+                            };
 
                             result.Add(entity);
                         }
@@ -52,14 +56,34 @@ namespace PetMarket.DataAccess
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spCategoriaInsert", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_InsertarCategoria", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    result = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return result;
+        }
+
+        public int Delete(int categoriaId)
+        {
+            int result = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_EliminarCategoria", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CategoriaId", categoriaId);
+
+                    conn.Open();
+                    result = cmd.ExecuteNonQuery();
                 }
             }
 

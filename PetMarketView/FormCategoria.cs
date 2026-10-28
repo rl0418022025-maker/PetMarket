@@ -28,14 +28,27 @@ namespace PetMarketView
 
         private void CargarEstados()
         {
+            cboEstado.DataSource = null;
             cboEstado.DataSource = _estadoBL.SelectAll();
             cboEstado.DisplayMember = "Nombre";
             cboEstado.ValueMember = "EstadoId";
+            cboEstado.SelectedIndex = -1;
         }
 
         private void CargarCategorias()
         {
             dgvCategorias.DataSource = _categoriaBL.SelectAll();
+
+            // Ocultar IDs innecesarios en la tabla
+            if (dgvCategorias.Columns["CategoriaId"] != null)
+                dgvCategorias.Columns["CategoriaId"].Visible = false;
+
+            if (dgvCategorias.Columns["EstadoId"] != null)
+                dgvCategorias.Columns["EstadoId"].Visible = false;
+
+            // Renombrar la columna de Estado
+            if (dgvCategorias.Columns["NombreEstado"] != null)
+                dgvCategorias.Columns["NombreEstado"].HeaderText = "Estado";
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)
@@ -43,6 +56,12 @@ namespace PetMarketView
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
                 MessageBox.Show("Ingrese un nombre de categoría.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (cboEstado.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione un estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -61,11 +80,15 @@ namespace PetMarketView
                 LimpiarCampos();
                 CargarCategorias();
             }
+            else
+            {
+                MessageBox.Show("No se pudo guardar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvCategorias.CurrentRow == null)
+            if (dgvCategorias.CurrentRow == null || dgvCategorias.CurrentRow.DataBoundItem == null)
             {
                 MessageBox.Show("Seleccione una categoría de la lista para eliminar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -82,10 +105,18 @@ namespace PetMarketView
 
             if (confirmacion == DialogResult.Yes)
             {
-                // Notificación de éxito y refresco de tabla
-                MessageBox.Show("Categoría eliminada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LimpiarCampos();
-                CargarCategorias();
+                int resultado = _categoriaBL.Delete(seleccionada.CategoriaId);
+
+                if (resultado > 0)
+                {
+                    MessageBox.Show("Categoría eliminada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LimpiarCampos();
+                    CargarCategorias();
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo eliminar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -98,7 +129,7 @@ namespace PetMarketView
         {
             txtNombre.Clear();
             txtDescripcion.Clear();
-            if (cboEstado.Items.Count > 0) cboEstado.SelectedIndex = 0;
+            cboEstado.SelectedIndex = -1;
             txtNombre.Focus();
         }
 
