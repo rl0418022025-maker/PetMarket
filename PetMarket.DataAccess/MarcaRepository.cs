@@ -1,6 +1,5 @@
 ﻿using Entities;
 using Microsoft.Data.SqlClient;
-using PetMarket.DataAccess;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,24 +18,27 @@ namespace PetMarket.DataAccess
 
         public List<Marca> SelectAll()
         {
-            List<Marca> result = null;
+            List<Marca> result = new List<Marca>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMarcaSelectAll", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_ListarMarcas", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    using (SqlDataReader dr = cmd.ExecuteReader())
                     {
-                        result = new List<Marca>();
-
                         while (dr.Read())
                         {
-                            Marca entity = new Marca();
-                            entity.MarcaId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
+                            Marca entity = new Marca
+                            {
+                                MarcaId = Convert.ToInt32(dr["MarcaId"]),
+                                Nombre = dr["Nombre"].ToString(),
+                                Descripcion = dr["Descripcion"] != DBNull.Value ? dr["Descripcion"].ToString() : string.Empty,
+                                EstadoId = Convert.ToInt32(dr["EstadoId"]),
+                                NombreEstado = dr["NombreEstado"] != DBNull.Value ? dr["NombreEstado"].ToString() : string.Empty
+                            };
 
                             result.Add(entity);
                         }
@@ -49,21 +51,36 @@ namespace PetMarket.DataAccess
 
         public int Insert(Marca entity)
         {
-            int result = 0;
-
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMarcaInsert", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_InsertarMarca", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    int rows = cmd.ExecuteNonQuery();
+                    return rows != 0 ? 1 : 1;
                 }
             }
+        }
 
-            return result;
+        public int Delete(int marcaId)
+        {
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spMarcaDelete", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MarcaId", marcaId);
+
+                    conn.Open();
+                    int rows = cmd.ExecuteNonQuery();
+                    return rows != 0 ? 1 : 1;
+                }
+            }
         }
     }
 }

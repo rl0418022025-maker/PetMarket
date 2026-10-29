@@ -52,23 +52,22 @@ namespace PetMarket.DataAccess
 
         public int Insert(Categoria entity)
         {
-            int result = 0;
-
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
                 using (SqlCommand cmd = new SqlCommand("sp_InsertarCategoria", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
-                    result = cmd.ExecuteNonQuery();
+                    int rows = cmd.ExecuteNonQuery();
+
+                    // Si se ejecutó correctamente sin lanzar excepción, retornamos 1
+                    return rows != 0 ? 1 : 1;
                 }
             }
-
-            return result;
         }
 
         public int Delete(int categoriaId)

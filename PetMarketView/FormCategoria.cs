@@ -39,14 +39,14 @@ namespace PetMarketView
         {
             dgvCategorias.DataSource = _categoriaBL.SelectAll();
 
-            // Ocultar IDs innecesarios en la tabla
+            // Ocultar IDs innecesarios en la tabla visual
             if (dgvCategorias.Columns["CategoriaId"] != null)
                 dgvCategorias.Columns["CategoriaId"].Visible = false;
 
             if (dgvCategorias.Columns["EstadoId"] != null)
                 dgvCategorias.Columns["EstadoId"].Visible = false;
 
-            // Renombrar la columna de Estado
+            // Renombrar encabezado
             if (dgvCategorias.Columns["NombreEstado"] != null)
                 dgvCategorias.Columns["NombreEstado"].HeaderText = "Estado";
         }
@@ -65,24 +65,31 @@ namespace PetMarketView
                 return;
             }
 
-            Categoria nuevaCategoria = new Categoria
+            try
             {
-                Nombre = txtNombre.Text.Trim(),
-                Descripcion = txtDescripcion.Text.Trim(),
-                EstadoId = Convert.ToInt32(cboEstado.SelectedValue)
-            };
+                Categoria nuevaCategoria = new Categoria
+                {
+                    Nombre = txtNombre.Text.Trim(),
+                    Descripcion = txtDescripcion.Text.Trim(),
+                    EstadoId = Convert.ToInt32(cboEstado.SelectedValue)
+                };
 
-            int resultado = _categoriaBL.Insert(nuevaCategoria);
+                int resultado = _categoriaBL.Insert(nuevaCategoria);
 
-            if (resultado > 0)
-            {
-                MessageBox.Show("Categoría guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LimpiarCampos();
-                CargarCategorias();
+                if (resultado > 0)
+                {
+                    MessageBox.Show("Categoría guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LimpiarCampos();
+                    CargarCategorias();
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo guardar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No se pudo guardar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error en la base de datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -105,17 +112,24 @@ namespace PetMarketView
 
             if (confirmacion == DialogResult.Yes)
             {
-                int resultado = _categoriaBL.Delete(seleccionada.CategoriaId);
+                try
+                {
+                    int resultado = _categoriaBL.Delete(seleccionada.CategoriaId);
 
-                if (resultado > 0)
-                {
-                    MessageBox.Show("Categoría eliminada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarCampos();
-                    CargarCategorias();
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Categoría eliminada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarCategorias();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo eliminar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No se pudo eliminar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error al intentar eliminar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

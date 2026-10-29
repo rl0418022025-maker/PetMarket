@@ -31,13 +31,15 @@
             textBox1 = new System.Windows.Forms.TextBox();
             lblNombre = new System.Windows.Forms.Label();
             lblDescripcion = new System.Windows.Forms.Label();
-            textNombre = new System.Windows.Forms.TextBox();
-            textDescripcion = new System.Windows.Forms.TextBox();
-            dataGridView1 = new System.Windows.Forms.DataGridView();
+            txtNombre = new System.Windows.Forms.TextBox();
+            txtDescripcion = new System.Windows.Forms.TextBox();
+            dgvMarcas = new System.Windows.Forms.DataGridView();
             btnGuardar = new System.Windows.Forms.Button();
             btnLimpiar = new System.Windows.Forms.Button();
             btnEliminar = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            lblEstado = new System.Windows.Forms.Label();
+            cboEstado = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)dgvMarcas).BeginInit();
             SuspendLayout();
             // 
             // textBox1
@@ -70,27 +72,27 @@
             lblDescripcion.TabIndex = 2;
             lblDescripcion.Text = "Descripcion";
             // 
-            // textNombre
+            // txtNombre
             // 
-            textNombre.Location = new System.Drawing.Point(109, 60);
-            textNombre.Name = "textNombre";
-            textNombre.Size = new System.Drawing.Size(254, 23);
-            textNombre.TabIndex = 3;
+            txtNombre.Location = new System.Drawing.Point(109, 60);
+            txtNombre.Name = "txtNombre";
+            txtNombre.Size = new System.Drawing.Size(254, 23);
+            txtNombre.TabIndex = 3;
             // 
-            // textDescripcion
+            // txtDescripcion
             // 
-            textDescripcion.Location = new System.Drawing.Point(125, 98);
-            textDescripcion.Name = "textDescripcion";
-            textDescripcion.Size = new System.Drawing.Size(238, 23);
-            textDescripcion.TabIndex = 4;
+            txtDescripcion.Location = new System.Drawing.Point(125, 98);
+            txtDescripcion.Name = "txtDescripcion";
+            txtDescripcion.Size = new System.Drawing.Size(317, 23);
+            txtDescripcion.TabIndex = 4;
             // 
-            // dataGridView1
+            // dgvMarcas
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new System.Drawing.Point(49, 144);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new System.Drawing.Size(702, 150);
-            dataGridView1.TabIndex = 5;
+            dgvMarcas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvMarcas.Location = new System.Drawing.Point(39, 181);
+            dgvMarcas.Name = "dgvMarcas";
+            dgvMarcas.Size = new System.Drawing.Size(702, 150);
+            dgvMarcas.TabIndex = 5;
             // 
             // btnGuardar
             // 
@@ -102,6 +104,7 @@
             btnGuardar.TabIndex = 6;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = false;
+            btnGuardar.Click += btnGuardar_Click;
             // 
             // btnLimpiar
             // 
@@ -114,6 +117,7 @@
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             btnLimpiar.UseVisualStyleBackColor = false;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // btnEliminar
             // 
@@ -125,25 +129,45 @@
             btnEliminar.TabIndex = 8;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
-            btnEliminar.Click += Eliminar;
+            btnEliminar.Click += btnEliminar_Click;
+            // 
+            // lblEstado
+            // 
+            lblEstado.AutoSize = true;
+            lblEstado.Location = new System.Drawing.Point(54, 140);
+            lblEstado.Name = "lblEstado";
+            lblEstado.Size = new System.Drawing.Size(42, 15);
+            lblEstado.TabIndex = 9;
+            lblEstado.Text = "Estado";
+            // 
+            // cboEstado
+            // 
+            cboEstado.FormattingEnabled = true;
+            cboEstado.Location = new System.Drawing.Point(115, 143);
+            cboEstado.Name = "cboEstado";
+            cboEstado.Size = new System.Drawing.Size(121, 23);
+            cboEstado.TabIndex = 10;
             // 
             // FormMarca
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(cboEstado);
+            Controls.Add(lblEstado);
             Controls.Add(btnEliminar);
             Controls.Add(btnLimpiar);
             Controls.Add(btnGuardar);
-            Controls.Add(dataGridView1);
-            Controls.Add(textDescripcion);
-            Controls.Add(textNombre);
+            Controls.Add(dgvMarcas);
+            Controls.Add(txtDescripcion);
+            Controls.Add(txtNombre);
             Controls.Add(lblDescripcion);
             Controls.Add(lblNombre);
             Controls.Add(textBox1);
             Name = "FormMarca";
             Text = "FormMarca";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            Load += FormMarca_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvMarcas).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -153,11 +177,13 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label lblNombre;
         private System.Windows.Forms.Label lblDescripcion;
-        private System.Windows.Forms.TextBox textNombre;
-        private System.Windows.Forms.TextBox textDescripcion;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.TextBox txtNombre;
+        private System.Windows.Forms.TextBox txtDescripcion;
+        private System.Windows.Forms.DataGridView dgvMarcas;
         private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Label lblEstado;
+        private System.Windows.Forms.ComboBox cboEstado;
     }
 }

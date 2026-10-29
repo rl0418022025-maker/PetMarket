@@ -17,32 +17,38 @@ namespace PetMarket.BusinessLogic
 
         public List<Marca> SelectAll()
         {
-            List<Marca> result = null;
             try
             {
-                result = _repository.SelectAll();
+                return _repository.SelectAll();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
-            return result;
         }
 
         public int Insert(Marca entity)
         {
-            int result;
             try
             {
-                result = _repository.Insert(entity);
+                return _repository.Insert(entity);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
 
-            return result;
+        public int Delete(int id)
+        {
+            try
+            {
+                return _repository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
