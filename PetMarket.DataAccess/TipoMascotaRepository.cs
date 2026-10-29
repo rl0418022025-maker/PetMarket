@@ -1,5 +1,4 @@
-﻿using Entities;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,25 +17,27 @@ namespace PetMarket.DataAccess
 
         public List<TipoMascota> SelectAll()
         {
-            List<TipoMascota> result = null;
+            List<TipoMascota> result = new List<TipoMascota>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spTipoMascotaSelectAll", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_ListarTiposMascota", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
-                    {
-                        result = new List<TipoMascota>();
 
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
                         while (dr.Read())
                         {
-                            TipoMascota entity = new TipoMascota();
-                            entity.TipoMascotaId = dr.GetInt32(0);
-                            entity.Especie = dr.GetString(1);
-                            entity.EstadoId = dr.GetInt32(2);
+                            TipoMascota entity = new TipoMascota
+                            {
+                                TipoMascotaId = Convert.ToInt32(dr["TipoMascotaId"]),
+                                Especie = dr["Especie"].ToString()!,
+                                Descripcion = dr["Descripcion"] != DBNull.Value ? dr["Descripcion"].ToString()! : string.Empty,
+                                EstadoId = Convert.ToInt32(dr["EstadoId"]),
+                                NombreEstado = dr["NombreEstado"] != DBNull.Value ? dr["NombreEstado"].ToString()! : string.Empty
+                            };
 
                             result.Add(entity);
                         }
@@ -49,22 +50,34 @@ namespace PetMarket.DataAccess
 
         public int Insert(TipoMascota entity)
         {
-            int result = 0;
-
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spTipoMascotaInsert", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_InsertarTipoMascota", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Especie);
+                    cmd.Parameters.AddWithValue("@Especie", entity.Especie);
+                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    return cmd.ExecuteNonQuery();
                 }
             }
+        }
 
-            return result;
+        public int Delete(int tipoMascotaId)
+        {
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_EliminarTipoMascota", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@TipoMascotaId", tipoMascotaId);
+
+                    conn.Open();
+                    return cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
