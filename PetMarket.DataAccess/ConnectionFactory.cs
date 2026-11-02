@@ -9,7 +9,7 @@ namespace PetMarket.DataAccess
 
         public ConnectionFactory()
         {
-            _connectionString = @"Server=localhost\SQLEXPRESS;Database=PetMarket;User Id=sa;Password=PetMarket123*;TrustServerCertificate=True;Connection Timeout=10;";
+            _connectionString = @"Server=10.10.41.114\SQLEXPRESS;Database=PetMarket;User Id=sa;Password=PetMarket123*;TrustServerCertificate=True;Connection Timeout=10;";
         }
 
         public SqlConnection CreateConnection()
