@@ -48,81 +48,86 @@
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            label1.Location = new System.Drawing.Point(254, 9);
+            label1.Location = new System.Drawing.Point(290, 12);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(289, 29);
+            label1.Size = new System.Drawing.Size(360, 35);
             label1.TabIndex = 0;
             label1.Text = "Gestión de Proveedores";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(94, 77);
+            label2.Location = new System.Drawing.Point(107, 103);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(110, 15);
+            label2.Size = new System.Drawing.Size(138, 20);
             label2.TabIndex = 1;
             label2.Text = "Nombre / Empresa:";
             // 
             // txtNombre
             // 
-            txtNombre.Location = new System.Drawing.Point(94, 95);
+            txtNombre.Location = new System.Drawing.Point(107, 127);
+            txtNombre.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new System.Drawing.Size(252, 23);
+            txtNombre.Size = new System.Drawing.Size(287, 27);
             txtNombre.TabIndex = 2;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(480, 77);
+            label3.Location = new System.Drawing.Point(549, 103);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(55, 15);
+            label3.Size = new System.Drawing.Size(70, 20);
             label3.TabIndex = 3;
             label3.Text = "Teléfono:";
             // 
             // txtTelefono
             // 
-            txtTelefono.Location = new System.Drawing.Point(480, 95);
+            txtTelefono.Location = new System.Drawing.Point(549, 127);
+            txtTelefono.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtTelefono.Name = "txtTelefono";
-            txtTelefono.Size = new System.Drawing.Size(252, 23);
+            txtTelefono.Size = new System.Drawing.Size(287, 27);
             txtTelefono.TabIndex = 4;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(94, 134);
+            label4.Location = new System.Drawing.Point(107, 179);
             label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(46, 15);
+            label4.Size = new System.Drawing.Size(57, 20);
             label4.TabIndex = 5;
             label4.Text = "Correo:";
             // 
             // txtCorreo
             // 
-            txtCorreo.Location = new System.Drawing.Point(94, 152);
+            txtCorreo.Location = new System.Drawing.Point(107, 203);
+            txtCorreo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtCorreo.Name = "txtCorreo";
-            txtCorreo.Size = new System.Drawing.Size(252, 23);
+            txtCorreo.Size = new System.Drawing.Size(287, 27);
             txtCorreo.TabIndex = 6;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(480, 134);
+            label5.Location = new System.Drawing.Point(549, 179);
             label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(60, 15);
+            label5.Size = new System.Drawing.Size(75, 20);
             label5.TabIndex = 7;
             label5.Text = "Dirección:";
             // 
             // txtDireccion
             // 
-            txtDireccion.Location = new System.Drawing.Point(480, 152);
+            txtDireccion.Location = new System.Drawing.Point(549, 203);
+            txtDireccion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtDireccion.Name = "txtDireccion";
-            txtDireccion.Size = new System.Drawing.Size(252, 23);
+            txtDireccion.Size = new System.Drawing.Size(287, 27);
             txtDireccion.TabIndex = 8;
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new System.Drawing.Point(254, 230);
+            btnGuardar.Location = new System.Drawing.Point(290, 307);
+            btnGuardar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new System.Drawing.Size(75, 23);
+            btnGuardar.Size = new System.Drawing.Size(86, 31);
             btnGuardar.TabIndex = 9;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = true;
@@ -130,9 +135,10 @@
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Location = new System.Drawing.Point(362, 230);
+            btnLimpiar.Location = new System.Drawing.Point(414, 307);
+            btnLimpiar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new System.Drawing.Size(75, 23);
+            btnLimpiar.Size = new System.Drawing.Size(86, 31);
             btnLimpiar.TabIndex = 10;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = true;
@@ -140,26 +146,32 @@
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new System.Drawing.Point(468, 230);
+            btnEliminar.Location = new System.Drawing.Point(535, 307);
+            btnEliminar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new System.Drawing.Size(75, 23);
+            btnEliminar.Size = new System.Drawing.Size(86, 31);
             btnEliminar.TabIndex = 11;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = true;
+            btnEliminar.Click += btnEliminar_Click;
             // 
             // dgvProveedores
             // 
             dgvProveedores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvProveedores.Location = new System.Drawing.Point(32, 276);
+            dgvProveedores.Location = new System.Drawing.Point(37, 368);
+            dgvProveedores.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             dgvProveedores.Name = "dgvProveedores";
-            dgvProveedores.Size = new System.Drawing.Size(731, 150);
+            dgvProveedores.RowHeadersWidth = 51;
+            dgvProveedores.Size = new System.Drawing.Size(835, 200);
             dgvProveedores.TabIndex = 12;
+            dgvProveedores.CellContentClick += dgvProveedores_CellContentClick;
+            dgvProveedores.Click += FormProveedor_Load;
             // 
             // FormProveedor
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 450);
+            ClientSize = new System.Drawing.Size(914, 600);
             Controls.Add(dgvProveedores);
             Controls.Add(btnEliminar);
             Controls.Add(btnLimpiar);
@@ -173,6 +185,7 @@
             Controls.Add(txtNombre);
             Controls.Add(label2);
             Controls.Add(label1);
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             Name = "FormProveedor";
             Text = "FormProveedor";
             ((System.ComponentModel.ISupportInitialize)dgvProveedores).EndInit();

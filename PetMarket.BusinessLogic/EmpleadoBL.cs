@@ -17,32 +17,50 @@ namespace PetMarket.BusinessLogic
 
         public List<Empleado> SelectAll()
         {
-            List<Empleado> result = null;
             try
             {
-                result = _repository.SelectAll();
+                return _repository.SelectAll();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
-            return result;
         }
 
         public int Insert(Empleado entity)
         {
-            int result;
             try
             {
-                result = _repository.Insert(entity);
+                return _repository.Insert(entity);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
 
-            return result;
+        public bool Update(Empleado entity)
+        {
+            try
+            {
+                return _repository.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public bool Delete(int id)
+        {
+            try
+            {
+                return _repository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

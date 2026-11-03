@@ -133,6 +133,7 @@ namespace PetMarketView
             dgvCategorias.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvCategorias.Size = new Size(874, 200);
             dgvCategorias.TabIndex = 9;
+            dgvCategorias.CellContentClick += dgvCategorias_CellContentClick;
             // 
             // btnEliminar
             // 

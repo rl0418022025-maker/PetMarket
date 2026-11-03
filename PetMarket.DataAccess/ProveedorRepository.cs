@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,28 +17,27 @@ namespace PetMarket.DataAccess
 
         public List<Proveedor> SelectAll()
         {
-            List<Proveedor> result = null;
+            List<Proveedor> result = new List<Proveedor>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
                 using (SqlCommand cmd = new SqlCommand("spProveedorSelectAll", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     conn.Open();
+
                     using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        result = new List<Proveedor>();
-
                         while (dr.Read())
                         {
-                            Proveedor entity = new Proveedor();
-                            entity.ProveedorId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.Telefono = dr.GetString(2);
-                            entity.Correo = dr.GetString(3);
-                            entity.Direccion = dr.GetString(4);
-
+                            Proveedor entity = new Proveedor
+                            {
+                                ProveedorId = dr.GetInt32(0),
+                                Nombre = dr.GetString(1),
+                                Telefono = dr.IsDBNull(2) ? string.Empty : dr.GetString(2),
+                                Correo = dr.IsDBNull(3) ? string.Empty : dr.GetString(3),
+                                Direccion = dr.IsDBNull(4) ? string.Empty : dr.GetString(4)
+                            };
                             result.Add(entity);
                         }
                     }
@@ -59,16 +57,62 @@ namespace PetMarket.DataAccess
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Telefono", entity.Telefono);
-                    cmd.Parameters.AddWithValue("@Correo", entity.Correo);
-                    cmd.Parameters.AddWithValue("@Direccion", entity.Direccion);
+                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(entity.Telefono) ? (object)DBNull.Value : entity.Telefono);
+                    cmd.Parameters.AddWithValue("@Correo", string.IsNullOrEmpty(entity.Correo) ? (object)DBNull.Value : entity.Correo);
+                    cmd.Parameters.AddWithValue("@Direccion", string.IsNullOrEmpty(entity.Direccion) ? (object)DBNull.Value : entity.Direccion);
 
                     conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    object scalar = cmd.ExecuteScalar();
+                    if (scalar != null && scalar != DBNull.Value)
+                    {
+                        result = Convert.ToInt32(scalar);
+                    }
                 }
             }
 
             return result;
+        }
+
+        public bool Update(Proveedor entity)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spProveedorUpdate", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ProveedorId", entity.ProveedorId);
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(entity.Telefono) ? (object)DBNull.Value : entity.Telefono);
+                    cmd.Parameters.AddWithValue("@Correo", string.IsNullOrEmpty(entity.Correo) ? (object)DBNull.Value : entity.Correo);
+                    cmd.Parameters.AddWithValue("@Direccion", string.IsNullOrEmpty(entity.Direccion) ? (object)DBNull.Value : entity.Direccion);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
+        }
+
+        public bool Delete(int id)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spProveedorDelete", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ProveedorId", id);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
         }
     }
 }

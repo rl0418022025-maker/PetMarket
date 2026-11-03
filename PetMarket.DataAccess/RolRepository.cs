@@ -18,26 +18,26 @@ namespace PetMarket.DataAccess
 
         public List<Rol> SelectAll()
         {
-            List<Rol> result = null;
+            List<Rol> result = new List<Rol>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
                 using (SqlCommand cmd = new SqlCommand("spRolSelectAll", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     conn.Open();
+
                     using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        result = new List<Rol>();
-
                         while (dr.Read())
                         {
-                            Rol entity = new Rol();
-                            entity.RolId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.EstadoId = dr.GetInt32(2);
-
+                            Rol entity = new Rol
+                            {
+                                RolId = dr.GetInt32(0),
+                                Nombre = dr.GetString(1),
+                                Descripcion = dr.IsDBNull(2) ? string.Empty : dr.GetString(2),
+                                EstadoId = dr.GetInt32(3)
+                            };
                             result.Add(entity);
                         }
                     }
@@ -53,18 +53,64 @@ namespace PetMarket.DataAccess
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spClienteInsert", conn))
+                using (SqlCommand cmd = new SqlCommand("spRolInsert", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    object scalar = cmd.ExecuteScalar();
+                    if (scalar != null && scalar != DBNull.Value)
+                    {
+                        result = Convert.ToInt32(scalar);
+                    }
                 }
             }
 
             return result;
+        }
+
+        public bool Update(Rol entity)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spRolUpdate", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RolId", entity.RolId);
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
+        }
+
+        public bool Delete(int id)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spRolDelete", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RolId", id);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PetMarket.BusinessLogic;
+using PetMarket.DataAccess;
+using PetMarket.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,25 +13,46 @@ namespace PetMarketView
 {
     public partial class FormProveedor : Form
     {
+        private readonly ProveedorBL _proveedorBL;
         private int idProveedorSeleccionado = 0;
 
         public FormProveedor()
         {
             InitializeComponent();
+
+            // Inicializamos la conexión y la lógica de negocio
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+            _proveedorBL = new ProveedorBL(new ProveedorRepository(connectionFactory));
+
+            // Llamamos a la carga de datos aquí directamente para que no dependa del evento Load del diseñador
+            CargarProveedores();
         }
 
         private void FormProveedor_Load(object sender, EventArgs e)
         {
+            // Por si acaso el evento está vinculado, dejamos este método vacío o llamando a la carga
             CargarProveedores();
         }
 
         private void CargarProveedores()
         {
-            // Lógica para llenar la tabla
-            // dgvProveedores.DataSource = proveedorBL.SelectAll();
+            try
+            {
+                // Limpiamos y asignamos la fuente de datos para que aparezcan las columnas de inmediato
+                dgvProveedores.DataSource = null;
+                dgvProveedores.DataSource = _proveedorBL.SelectAll();
+
+                // Ocultamos únicamente el ID interno de la base de datos
+                if (dgvProveedores.Columns["ProveedorId"] != null)
+                    dgvProveedores.Columns["ProveedorId"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar los proveedores: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        // --- MÉTODOS DEL FORMULARIO ---
+        // --- MÉTODOS DE LOS BOTONES ---
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -43,25 +67,51 @@ namespace PetMarketView
                 return;
             }
 
-            if (idProveedorSeleccionado == 0)
+            try
             {
-                MessageBox.Show(
-                    "Proveedor listo para guardar. Falta conectar la base de datos.",
-                    "Información",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show(
-                    "Proveedor seleccionado para actualizar. Falta conectar la base de datos.",
-                    "Información",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
+                Proveedor proveedor = new Proveedor
+                {
+                    Nombre = txtNombre.Text.Trim(),
+                    Telefono = txtTelefono.Text.Trim(),
+                    Correo = txtCorreo.Text.Trim(),
+                    Direccion = txtDireccion.Text.Trim()
+                };
 
-            LimpiarCampos();
-            CargarProveedores();
+                if (idProveedorSeleccionado == 0)
+                {
+                    // --- INSERTAR ---
+                    int resultado = _proveedorBL.Insert(proveedor);
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Proveedor guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo guardar el proveedor.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    // --- ACTUALIZAR ---
+                    proveedor.ProveedorId = idProveedorSeleccionado;
+                    bool actualizado = _proveedorBL.Update(proveedor);
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Proveedor actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar el proveedor.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                LimpiarCampos();
+                CargarProveedores();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error en la base de datos: {ex.Message}", "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -89,16 +139,26 @@ namespace PetMarketView
 
             if (respuesta == DialogResult.Yes)
             {
-                // Aquí se conectará el método Delete de ProveedorBL.
+                try
+                {
+                    bool eliminado = _proveedorBL.Delete(idProveedorSeleccionado);
 
-                MessageBox.Show(
-                    "Falta conectar la eliminación con la base de datos.",
-                    "Información",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    if (eliminado)
+                    {
+                        MessageBox.Show("Proveedor eliminado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo eliminar el proveedor.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
-                LimpiarCampos();
-                CargarProveedores();
+                    LimpiarCampos();
+                    CargarProveedores();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al intentar eliminar: {ex.Message}", "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -111,6 +171,7 @@ namespace PetMarketView
 
             idProveedorSeleccionado = 0;
             btnGuardar.Text = "Guardar";
+            txtNombre.Focus();
         }
 
         private void dgvProveedores_CellClick(
@@ -141,6 +202,11 @@ namespace PetMarketView
                     btnGuardar.Text = "Actualizar";
                 }
             }
+        }
+
+        private void dgvProveedores_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

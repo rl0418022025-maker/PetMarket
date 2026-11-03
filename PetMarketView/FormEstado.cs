@@ -106,5 +106,10 @@ namespace PetMarketView
             txtDescripcion.Clear();
             txtNombre.Focus();
         }
+
+        private void txtDescripcion_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

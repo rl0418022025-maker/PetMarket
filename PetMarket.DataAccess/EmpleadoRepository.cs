@@ -18,25 +18,26 @@ namespace PetMarket.DataAccess
 
         public List<Empleado> SelectAll()
         {
-            List<Empleado> result = null;
+            List<Empleado> result = new List<Empleado>();
 
             using (SqlConnection conn = _connectionFactory.CreateConnection())
             {
                 using (SqlCommand cmd = new SqlCommand("spEmpleadoSelectAll", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     conn.Open();
+
                     using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        result = new List<Empleado>();
-
                         while (dr.Read())
                         {
                             Empleado entity = new Empleado();
-                            entity.EmpleadoId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.EstadoId = dr.GetInt32(2);
+                            entity.EmpleadoId = dr.GetInt32(dr.GetOrdinal("EmpleadoId"));
+                            entity.Nombre = dr.GetString(dr.GetOrdinal("Nombre"));
+                            entity.Apellido = dr.GetString(dr.GetOrdinal("Apellido"));
+                            entity.DUI = dr.GetString(dr.GetOrdinal("DUI"));
+                            entity.Cargo = dr.GetString(dr.GetOrdinal("Cargo"));
+                            entity.EstadoId = dr.GetInt32(dr.GetOrdinal("EstadoId"));
 
                             result.Add(entity);
                         }
@@ -57,6 +58,9 @@ namespace PetMarket.DataAccess
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Apellido", entity.Apellido);
+                    cmd.Parameters.AddWithValue("@DUI", entity.DUI);
+                    cmd.Parameters.AddWithValue("@Cargo", entity.Cargo);
                     cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
 
                     conn.Open();
@@ -65,6 +69,49 @@ namespace PetMarket.DataAccess
             }
 
             return result;
+        }
+
+        public bool Update(Empleado entity)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spEmpleadoUpdate", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmpleadoId", entity.EmpleadoId);
+                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
+                    cmd.Parameters.AddWithValue("@Apellido", entity.Apellido);
+                    cmd.Parameters.AddWithValue("@DUI", entity.DUI);
+                    cmd.Parameters.AddWithValue("@Cargo", entity.Cargo);
+                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
+        }
+
+        public bool Delete(int empleadoId)
+        {
+            int rowsAffected = 0;
+
+            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand("spEmpleadoDelete", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmpleadoId", empleadoId);
+
+                    conn.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+
+            return rowsAffected > 0;
         }
     }
 }

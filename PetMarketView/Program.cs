@@ -11,8 +11,8 @@ namespace PetMarketView
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Ejecuta el formulario de Categoría al iniciar
-            Application.Run(new formTipoMascota());
+      
+            Application.Run(new FormPrincipalcs());
         }
     }
 }

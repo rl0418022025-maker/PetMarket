@@ -44,5 +44,35 @@ namespace PetMarket.BusinessLogic
 
             return result;
         }
+
+        public bool Update(Rol entity)
+        {
+            bool result;
+            try
+            {
+                result = _repository.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return result;
+        }
+
+        public bool Delete(int id)
+        {
+            bool result;
+            try
+            {
+                result = _repository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return result;
+        }
     }
 }

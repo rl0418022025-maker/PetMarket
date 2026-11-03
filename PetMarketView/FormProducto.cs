@@ -167,5 +167,10 @@ namespace PetMarketView
             cmbEstado.SelectedIndex = -1;
             txtNombre.Focus();
         }
+
+        private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

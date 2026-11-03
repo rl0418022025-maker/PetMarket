@@ -34,5 +34,45 @@ namespace PetMarketView
         {
 
         }
+
+        private void txtDUI_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textTelefono_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textEstado_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textApellido_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvClientes_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
