@@ -11,6 +11,8 @@ namespace Entities
         public string Apellido { get; set; }
         public string DUI { get; set; }
         public string Telefono { get; set; }
+        public string Correo {  get; set; }
+        public string Direccion {  get; set; }
         public int EstadoId { get; set; }
     }
 }

@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             label1 = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
-            label4 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
+            lblNombreUsuario = new System.Windows.Forms.Label();
+            lblEmpleadoId = new System.Windows.Forms.Label();
+            lblContraseña = new System.Windows.Forms.Label();
+            lblRolId = new System.Windows.Forms.Label();
             txtContrasena = new System.Windows.Forms.TextBox();
             txtNombreUsuario = new System.Windows.Forms.TextBox();
             cmbEmpleadoId = new System.Windows.Forms.ComboBox();
@@ -41,6 +41,8 @@
             btnLimpiar = new System.Windows.Forms.Button();
             btnEliminar = new System.Windows.Forms.Button();
             dgvUsuarios = new System.Windows.Forms.DataGridView();
+            lblEstadoId = new System.Windows.Forms.Label();
+            comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvUsuarios).BeginInit();
             SuspendLayout();
             // 
@@ -48,62 +50,64 @@
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            label1.Location = new System.Drawing.Point(218, 9);
+            label1.Location = new System.Drawing.Point(191, 7);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(297, 41);
+            label1.Size = new System.Drawing.Size(242, 32);
             label1.TabIndex = 0;
             label1.Text = "Gestión de Usuarios";
             // 
-            // label2
+            // lblNombreUsuario
             // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(50, 75);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(139, 20);
-            label2.TabIndex = 1;
-            label2.Text = "Nombre de Usuario";
+            lblNombreUsuario.AutoSize = true;
+            lblNombreUsuario.Location = new System.Drawing.Point(44, 56);
+            lblNombreUsuario.Name = "lblNombreUsuario";
+            lblNombreUsuario.Size = new System.Drawing.Size(91, 15);
+            lblNombreUsuario.TabIndex = 1;
+            lblNombreUsuario.Text = "NombreUsuario";
             // 
-            // label3
+            // lblEmpleadoId
             // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(50, 195);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(77, 20);
-            label3.TabIndex = 2;
-            label3.Text = "Empleado";
+            lblEmpleadoId.AutoSize = true;
+            lblEmpleadoId.Location = new System.Drawing.Point(44, 132);
+            lblEmpleadoId.Name = "lblEmpleadoId";
+            lblEmpleadoId.Size = new System.Drawing.Size(70, 15);
+            lblEmpleadoId.TabIndex = 2;
+            lblEmpleadoId.Text = "EmpleadoId";
             // 
-            // label4
+            // lblContraseña
             // 
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(50, 135);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(83, 20);
-            label4.TabIndex = 3;
-            label4.Text = "Contraseña";
+            lblContraseña.AutoSize = true;
+            lblContraseña.Location = new System.Drawing.Point(44, 96);
+            lblContraseña.Name = "lblContraseña";
+            lblContraseña.Size = new System.Drawing.Size(67, 15);
+            lblContraseña.TabIndex = 3;
+            lblContraseña.Text = "Contraseña";
             // 
-            // label5
+            // lblRolId
             // 
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(50, 255);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(31, 20);
-            label5.TabIndex = 4;
-            label5.Text = "Rol";
+            lblRolId.AutoSize = true;
+            lblRolId.Location = new System.Drawing.Point(44, 173);
+            lblRolId.Name = "lblRolId";
+            lblRolId.Size = new System.Drawing.Size(34, 15);
+            lblRolId.TabIndex = 4;
+            lblRolId.Text = "RolId";
             // 
             // txtContrasena
             // 
-            txtContrasena.Location = new System.Drawing.Point(50, 158);
+            txtContrasena.Location = new System.Drawing.Point(129, 93);
+            txtContrasena.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             txtContrasena.Name = "txtContrasena";
-            txtContrasena.Size = new System.Drawing.Size(240, 27);
+            txtContrasena.Size = new System.Drawing.Size(229, 23);
             txtContrasena.TabIndex = 5;
             txtContrasena.UseSystemPasswordChar = true;
             txtContrasena.TextChanged += txtContrasena_TextChanged;
             // 
             // txtNombreUsuario
             // 
-            txtNombreUsuario.Location = new System.Drawing.Point(50, 98);
+            txtNombreUsuario.Location = new System.Drawing.Point(141, 56);
+            txtNombreUsuario.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             txtNombreUsuario.Name = "txtNombreUsuario";
-            txtNombreUsuario.Size = new System.Drawing.Size(369, 27);
+            txtNombreUsuario.Size = new System.Drawing.Size(217, 23);
             txtNombreUsuario.TabIndex = 6;
             txtNombreUsuario.TextChanged += txtNombreUsuario_TextChanged;
             // 
@@ -111,9 +115,10 @@
             // 
             cmbEmpleadoId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cmbEmpleadoId.FormattingEnabled = true;
-            cmbEmpleadoId.Location = new System.Drawing.Point(50, 218);
+            cmbEmpleadoId.Location = new System.Drawing.Point(120, 129);
+            cmbEmpleadoId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             cmbEmpleadoId.Name = "cmbEmpleadoId";
-            cmbEmpleadoId.Size = new System.Drawing.Size(272, 28);
+            cmbEmpleadoId.Size = new System.Drawing.Size(238, 23);
             cmbEmpleadoId.TabIndex = 7;
             cmbEmpleadoId.SelectedIndexChanged += cmbEmpleadoId_SelectedIndexChanged;
             // 
@@ -121,17 +126,19 @@
             // 
             cmbRolId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cmbRolId.FormattingEnabled = true;
-            cmbRolId.Location = new System.Drawing.Point(50, 278);
+            cmbRolId.Location = new System.Drawing.Point(84, 170);
+            cmbRolId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             cmbRolId.Name = "cmbRolId";
-            cmbRolId.Size = new System.Drawing.Size(292, 28);
+            cmbRolId.Size = new System.Drawing.Size(274, 23);
             cmbRolId.TabIndex = 8;
             cmbRolId.SelectedIndexChanged += cmbRolId_SelectedIndexChanged;
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new System.Drawing.Point(50, 330);
+            btnGuardar.Location = new System.Drawing.Point(44, 248);
+            btnGuardar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new System.Drawing.Size(100, 30);
+            btnGuardar.Size = new System.Drawing.Size(88, 22);
             btnGuardar.TabIndex = 9;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = true;
@@ -139,9 +146,10 @@
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Location = new System.Drawing.Point(319, 330);
+            btnLimpiar.Location = new System.Drawing.Point(279, 248);
+            btnLimpiar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new System.Drawing.Size(100, 30);
+            btnLimpiar.Size = new System.Drawing.Size(88, 22);
             btnLimpiar.TabIndex = 10;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = true;
@@ -149,9 +157,10 @@
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new System.Drawing.Point(575, 330);
+            btnEliminar.Location = new System.Drawing.Point(503, 248);
+            btnEliminar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new System.Drawing.Size(100, 30);
+            btnEliminar.Size = new System.Drawing.Size(88, 22);
             btnEliminar.TabIndex = 11;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = true;
@@ -161,22 +170,42 @@
             // 
             dgvUsuarios.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             dgvUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvUsuarios.Location = new System.Drawing.Point(50, 380);
+            dgvUsuarios.Location = new System.Drawing.Point(44, 285);
+            dgvUsuarios.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             dgvUsuarios.MultiSelect = false;
             dgvUsuarios.Name = "dgvUsuarios";
             dgvUsuarios.ReadOnly = true;
             dgvUsuarios.RowHeadersVisible = false;
             dgvUsuarios.RowHeadersWidth = 51;
             dgvUsuarios.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dgvUsuarios.Size = new System.Drawing.Size(625, 188);
+            dgvUsuarios.Size = new System.Drawing.Size(547, 141);
             dgvUsuarios.TabIndex = 12;
             dgvUsuarios.CellContentClick += dgvUsuarios_CellContentClick;
             // 
+            // lblEstadoId
+            // 
+            lblEstadoId.AutoSize = true;
+            lblEstadoId.Location = new System.Drawing.Point(44, 213);
+            lblEstadoId.Name = "lblEstadoId";
+            lblEstadoId.Size = new System.Drawing.Size(52, 15);
+            lblEstadoId.TabIndex = 13;
+            lblEstadoId.Text = "EstadoId";
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new System.Drawing.Point(102, 210);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new System.Drawing.Size(256, 23);
+            comboBox1.TabIndex = 14;
+            // 
             // FormUsuario
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(732, 623);
+            ClientSize = new System.Drawing.Size(640, 467);
+            Controls.Add(comboBox1);
+            Controls.Add(lblEstadoId);
             Controls.Add(dgvUsuarios);
             Controls.Add(btnEliminar);
             Controls.Add(btnLimpiar);
@@ -185,12 +214,13 @@
             Controls.Add(cmbEmpleadoId);
             Controls.Add(txtNombreUsuario);
             Controls.Add(txtContrasena);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
+            Controls.Add(lblRolId);
+            Controls.Add(lblContraseña);
+            Controls.Add(lblEmpleadoId);
+            Controls.Add(lblNombreUsuario);
             Controls.Add(label1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "FormUsuario";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -204,10 +234,10 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblNombreUsuario;
+        private System.Windows.Forms.Label lblEmpleadoId;
+        private System.Windows.Forms.Label lblContraseña;
+        private System.Windows.Forms.Label lblRolId;
         private System.Windows.Forms.TextBox txtContrasena;
         private System.Windows.Forms.TextBox txtNombreUsuario;
         private System.Windows.Forms.ComboBox cmbEmpleadoId;
@@ -216,5 +246,7 @@
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnEliminar;
         private System.Windows.Forms.DataGridView dgvUsuarios;
+        private System.Windows.Forms.Label lblEstadoId;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

@@ -8,7 +8,7 @@ namespace PetMarket.Entities
     {
         public int VentaId { get; set; }
         public DateTime Fecha { get; set; }
-        public decimal total { get; set; }
+        public decimal Total { get; set; }
         public int ClienteId { get; set; }
         public int EmpleadoId { get; set; }
         public int MetodoPagoId { get; set; }

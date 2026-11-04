@@ -10,5 +10,6 @@ namespace Entities
         public DateTime Fecha { get; set; }
         public decimal Total { get; set; }
         public int ProveedorId { get; set; }
+        public int EmpleadoId { get; set; }
     }
 }

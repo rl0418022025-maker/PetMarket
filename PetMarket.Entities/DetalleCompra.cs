@@ -10,7 +10,7 @@ namespace Entities
         public int CompraId { get; set; }
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
-        public decimal PrecioCompra { get; set; }
-        public decimal Subtotal { get; set; }
+        public decimal PrecioUnitaio { get; set; }
+        public decimal TotalPagar { get; set; }
     }
 }

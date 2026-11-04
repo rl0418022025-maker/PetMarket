@@ -11,6 +11,6 @@ namespace PetMarket.Entities
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioVenta { get; set; }
-        public decimal Subtotal { get; set; }
+        public decimal Total { get; set; }
     }
 }

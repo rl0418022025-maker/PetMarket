@@ -143,7 +143,7 @@
             // cboEstado
             // 
             cboEstado.FormattingEnabled = true;
-            cboEstado.Location = new System.Drawing.Point(115, 143);
+            cboEstado.Location = new System.Drawing.Point(109, 132);
             cboEstado.Name = "cboEstado";
             cboEstado.Size = new System.Drawing.Size(121, 23);
             cboEstado.TabIndex = 10;

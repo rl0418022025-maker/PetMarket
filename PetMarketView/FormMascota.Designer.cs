@@ -43,6 +43,12 @@ namespace PetMarketView
             btnLimpiar = new Button();
             btnEliminar = new Button();
             dgvMascotas = new DataGridView();
+            lblTipMascotaId = new Label();
+            lblClienteId = new Label();
+            lblEstadoId = new Label();
+            cboTipoMascotaId = new ComboBox();
+            cboClienteId = new ComboBox();
+            cboEstadoId = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvMascotas).BeginInit();
             SuspendLayout();
             // 
@@ -59,7 +65,7 @@ namespace PetMarketView
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(60, 97);
+            label2.Location = new Point(54, 79);
             label2.Name = "label2";
             label2.Size = new Size(54, 15);
             label2.TabIndex = 1;
@@ -67,7 +73,7 @@ namespace PetMarketView
             // 
             // txtNombre
             // 
-            txtNombre.Location = new Point(60, 115);
+            txtNombre.Location = new Point(114, 76);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(192, 23);
             txtNombre.TabIndex = 2;
@@ -75,7 +81,7 @@ namespace PetMarketView
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(317, 97);
+            label3.Location = new Point(54, 123);
             label3.Name = "label3";
             label3.Size = new Size(49, 15);
             label3.TabIndex = 3;
@@ -83,7 +89,7 @@ namespace PetMarketView
             // 
             // txtEspecie
             // 
-            txtEspecie.Location = new Point(317, 115);
+            txtEspecie.Location = new Point(114, 115);
             txtEspecie.Name = "txtEspecie";
             txtEspecie.Size = new Size(192, 23);
             txtEspecie.TabIndex = 4;
@@ -91,7 +97,7 @@ namespace PetMarketView
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(554, 97);
+            label4.Location = new Point(54, 170);
             label4.Name = "label4";
             label4.Size = new Size(36, 15);
             label4.TabIndex = 5;
@@ -99,7 +105,7 @@ namespace PetMarketView
             // 
             // txtEdad
             // 
-            txtEdad.Location = new Point(554, 115);
+            txtEdad.Location = new Point(114, 162);
             txtEdad.Name = "txtEdad";
             txtEdad.Size = new Size(192, 23);
             txtEdad.TabIndex = 6;
@@ -139,11 +145,69 @@ namespace PetMarketView
             dgvMascotas.Size = new Size(735, 174);
             dgvMascotas.TabIndex = 10;
             // 
+            // lblTipMascotaId
+            // 
+            lblTipMascotaId.AutoSize = true;
+            lblTipMascotaId.Location = new Point(418, 84);
+            lblTipMascotaId.Name = "lblTipMascotaId";
+            lblTipMascotaId.Size = new Size(86, 15);
+            lblTipMascotaId.TabIndex = 11;
+            lblTipMascotaId.Text = "TipoMascotaId";
+            lblTipMascotaId.Click += label5_Click;
+            // 
+            // lblClienteId
+            // 
+            lblClienteId.AutoSize = true;
+            lblClienteId.Location = new Point(418, 123);
+            lblClienteId.Name = "lblClienteId";
+            lblClienteId.Size = new Size(54, 15);
+            lblClienteId.TabIndex = 12;
+            lblClienteId.Text = "ClienteId";
+            // 
+            // lblEstadoId
+            // 
+            lblEstadoId.AutoSize = true;
+            lblEstadoId.Location = new Point(420, 170);
+            lblEstadoId.Name = "lblEstadoId";
+            lblEstadoId.Size = new Size(52, 15);
+            lblEstadoId.TabIndex = 13;
+            lblEstadoId.Text = "EstadoId";
+            // 
+            // cboTipoMascotaId
+            // 
+            cboTipoMascotaId.FormattingEnabled = true;
+            cboTipoMascotaId.Location = new Point(510, 84);
+            cboTipoMascotaId.Name = "cboTipoMascotaId";
+            cboTipoMascotaId.Size = new Size(121, 23);
+            cboTipoMascotaId.TabIndex = 14;
+            // 
+            // cboClienteId
+            // 
+            cboClienteId.FormattingEnabled = true;
+            cboClienteId.Location = new Point(489, 120);
+            cboClienteId.Name = "cboClienteId";
+            cboClienteId.Size = new Size(121, 23);
+            cboClienteId.TabIndex = 15;
+            // 
+            // cboEstadoId
+            // 
+            cboEstadoId.FormattingEnabled = true;
+            cboEstadoId.Location = new Point(489, 162);
+            cboEstadoId.Name = "cboEstadoId";
+            cboEstadoId.Size = new Size(121, 23);
+            cboEstadoId.TabIndex = 16;
+            // 
             // FormMascota
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(cboEstadoId);
+            Controls.Add(cboClienteId);
+            Controls.Add(cboTipoMascotaId);
+            Controls.Add(lblEstadoId);
+            Controls.Add(lblClienteId);
+            Controls.Add(lblTipMascotaId);
             Controls.Add(dgvMascotas);
             Controls.Add(btnEliminar);
             Controls.Add(btnLimpiar);
@@ -176,5 +240,11 @@ namespace PetMarketView
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnEliminar;
         private System.Windows.Forms.DataGridView dgvMascotas;
+        private Label lblTipMascotaId;
+        private Label lblClienteId;
+        private Label lblEstadoId;
+        private ComboBox cboTipoMascotaId;
+        private ComboBox cboClienteId;
+        private ComboBox cboEstadoId;
     }
 }
