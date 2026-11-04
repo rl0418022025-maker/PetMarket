@@ -61,7 +61,7 @@ namespace PetMarketView
 
             try
             {
-                MetodoPago metodoPago = new MetodoPago
+                PetMarket.Entities.MetodoPago metodoPago = new PetMarket.Entities.MetodoPago
                 {
                     Nombre = txtNombre.Text.Trim(),
                     Descripcion = txtDescripcion.Text.Trim(),

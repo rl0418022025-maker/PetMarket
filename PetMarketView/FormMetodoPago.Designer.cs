@@ -158,7 +158,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FormMetodoPago";
-            Text = "FormMetodoPago";
+            Text = "MetodoPago";
             Load += FormMetodoPago_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMetodosPago).EndInit();
             ResumeLayout(false);
