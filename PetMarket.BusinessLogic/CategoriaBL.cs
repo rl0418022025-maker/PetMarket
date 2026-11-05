@@ -1,62 +1,36 @@
-﻿using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class CategoriaBL
     {
-        private readonly CategoriaRepository _repository;
+        private readonly CategoriaRepository _categoriaRepository;
 
-        public CategoriaBL(CategoriaRepository repository)
+        public CategoriaBL(CategoriaRepository categoriaRepository)
         {
-            _repository = repository;
+            _categoriaRepository = categoriaRepository;
         }
 
         public List<Categoria> SelectAll()
         {
-            List<Categoria> result = null;
-            try
-            {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _categoriaRepository.SelectAll();
         }
 
-        public int Insert(Categoria entity)
+        public int Insert(Categoria categoria)
         {
-            int result;
-            try
-            {
-                result = _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _categoriaRepository.Insert(categoria);
         }
 
-        public int Delete(int id)
+        public bool Update(Categoria categoria)
         {
-            int result;
-            try
-            {
-                result = _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _categoriaRepository.Update(categoria);
+        }
 
-            return result;
+        public int Delete(int categoriaId)
+        {
+            return _categoriaRepository.Delete(categoriaId);
         }
     }
 }

@@ -10,13 +10,12 @@ namespace PetMarketView
     public partial class formTipoMascota : Form
     {
         private readonly TipoMascotaBL _tipoMascotaBL;
+        private int idTipoMascotaSeleccionado = 0;
 
-        // Clase auxiliar para el ComboBox
         private class OpcionCombo
         {
             public string Texto { get; set; } = string.Empty;
             public int Valor { get; set; }
-
             public override string ToString() => Texto;
         }
 
@@ -33,21 +32,21 @@ namespace PetMarketView
         {
             CargarEstados();
             CargarGrilla();
+            LimpiarCampos();
         }
 
         private void CargarEstados()
         {
             try
             {
-                // Intenta cargar desde la base de datos si la capa Estado existe
                 EstadoBL estadoBL = new EstadoBL(new EstadoRepository(new ConnectionFactory()));
                 cmbEstadoId.DataSource = estadoBL.SelectAll();
                 cmbEstadoId.DisplayMember = "Nombre";
                 cmbEstadoId.ValueMember = "EstadoId";
+                cmbEstadoId.SelectedIndex = -1;
             }
             catch
             {
-                // Alternativa manual estable y limpia
                 List<OpcionCombo> listaEstados = new List<OpcionCombo>
                 {
                     new OpcionCombo { Texto = "Activo", Valor = 1 },
@@ -57,7 +56,7 @@ namespace PetMarketView
                 cmbEstadoId.DataSource = listaEstados;
                 cmbEstadoId.DisplayMember = "Texto";
                 cmbEstadoId.ValueMember = "Valor";
-                cmbEstadoId.SelectedIndex = 0;
+                cmbEstadoId.SelectedIndex = -1;
             }
         }
 
@@ -65,16 +64,36 @@ namespace PetMarketView
         {
             try
             {
+                dgvTipoMascota.DataSource = null;
                 dgvTipoMascota.DataSource = _tipoMascotaBL.SelectAll();
 
+                // 1. Ocultar el ID principal
                 if (dgvTipoMascota.Columns["TipoMascotaId"] != null)
                     dgvTipoMascota.Columns["TipoMascotaId"].Visible = false;
 
-                if (dgvTipoMascota.Columns["EstadoId"] != null)
-                    dgvTipoMascota.Columns["EstadoId"].Visible = false;
+                // 2. Configurar columna Especie
+                if (dgvTipoMascota.Columns["Especie"] != null)
+                {
+                    dgvTipoMascota.Columns["Especie"].Visible = true;
+                    dgvTipoMascota.Columns["Especie"].HeaderText = "Especie";
+                    dgvTipoMascota.Columns["Especie"].DisplayIndex = 0;
+                }
 
-                if (dgvTipoMascota.Columns["NombreEstado"] != null)
-                    dgvTipoMascota.Columns["NombreEstado"].HeaderText = "Estado";
+                // 3. Configurar columna Descripcion
+                if (dgvTipoMascota.Columns["Descripcion"] != null)
+                {
+                    dgvTipoMascota.Columns["Descripcion"].Visible = true;
+                    dgvTipoMascota.Columns["Descripcion"].HeaderText = "Descripción";
+                    dgvTipoMascota.Columns["Descripcion"].DisplayIndex = 1;
+                }
+
+                // 4. Mostrar la columna EstadoId como la tercera columna visible
+                if (dgvTipoMascota.Columns["EstadoId"] != null)
+                {
+                    dgvTipoMascota.Columns["EstadoId"].Visible = true;
+                    dgvTipoMascota.Columns["EstadoId"].HeaderText = "Estado (ID)";
+                    dgvTipoMascota.Columns["EstadoId"].DisplayIndex = 2;
+                }
             }
             catch (Exception ex)
             {
@@ -91,14 +110,16 @@ namespace PetMarketView
                 return;
             }
 
+            if (cmbEstadoId.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione un estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbEstadoId.Focus();
+                return;
+            }
+
             try
             {
-                int estadoId = 1;
-
-                if (cmbEstadoId.SelectedValue != null && int.TryParse(cmbEstadoId.SelectedValue.ToString(), out int idCombo))
-                {
-                    estadoId = idCombo;
-                }
+                int estadoId = Convert.ToInt32(cmbEstadoId.SelectedValue);
 
                 TipoMascota entidad = new TipoMascota
                 {
@@ -107,17 +128,36 @@ namespace PetMarketView
                     EstadoId = estadoId
                 };
 
-                int resultado = _tipoMascotaBL.Insert(entidad);
-
-                if (resultado > 0)
+                if (idTipoMascotaSeleccionado == 0)
                 {
-                    MessageBox.Show("Guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarCampos();
-                    CargarGrilla();
+                    int resultado = _tipoMascotaBL.Insert(entidad);
+
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarGrilla();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo guardar el registro.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo guardar el registro.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    entidad.TipoMascotaId = idTipoMascotaSeleccionado;
+                    bool actualizado = _tipoMascotaBL.Update(entidad);
+
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Actualizado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarGrilla();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar el registro.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -128,24 +168,26 @@ namespace PetMarketView
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvTipoMascota.CurrentRow == null || dgvTipoMascota.CurrentRow.DataBoundItem == null)
+            if (idTipoMascotaSeleccionado == 0)
             {
                 MessageBox.Show("Seleccione un registro para eliminar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            TipoMascota seleccionado = (TipoMascota)dgvTipoMascota.CurrentRow.DataBoundItem;
-
-            if (MessageBox.Show($"¿Desea eliminar la especie '{seleccionado.Especie}'?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("¿Desea eliminar la especie seleccionada?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 try
                 {
-                    int resultado = _tipoMascotaBL.Delete(seleccionado.TipoMascotaId);
-                    if (resultado > 0)
+                    bool eliminado = _tipoMascotaBL.Delete(idTipoMascotaSeleccionado);
+                    if (eliminado)
                     {
                         MessageBox.Show("Eliminado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LimpiarCampos();
                         CargarGrilla();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo eliminar el registro.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
@@ -164,6 +206,12 @@ namespace PetMarketView
         {
             txtEspecie.Clear();
             if (txtDescripcion != null) txtDescripcion.Clear();
+            if (cmbEstadoId != null) cmbEstadoId.SelectedIndex = -1;
+
+            // Se reinicia a 0 para garantizar que el siguiente guardado sea una inserción nueva
+            idTipoMascotaSeleccionado = 0;
+
+            if (btnGuardar != null) btnGuardar.Text = "Guardar";
             if (dgvTipoMascota != null) dgvTipoMascota.ClearSelection();
             txtEspecie.Focus();
         }
@@ -172,10 +220,27 @@ namespace PetMarketView
         {
             if (e.RowIndex >= 0 && dgvTipoMascota.CurrentRow != null)
             {
-                TipoMascota seleccionado = (TipoMascota)dgvTipoMascota.CurrentRow.DataBoundItem;
-                txtEspecie.Text = seleccionado.Especie;
-                if (txtDescripcion != null) txtDescripcion.Text = seleccionado.Descripcion;
+                DataGridViewRow fila = dgvTipoMascota.Rows[e.RowIndex];
+
+                if (fila.Cells["TipoMascotaId"].Value != null)
+                {
+                    idTipoMascotaSeleccionado = Convert.ToInt32(fila.Cells["TipoMascotaId"].Value);
+                    txtEspecie.Text = Convert.ToString(fila.Cells["Especie"].Value);
+                    if (txtDescripcion != null)
+                        txtDescripcion.Text = Convert.ToString(fila.Cells["Descripcion"].Value);
+
+                    if (cmbEstadoId != null && fila.Cells["EstadoId"].Value != null)
+                    {
+                        cmbEstadoId.SelectedValue = Convert.ToInt32(fila.Cells["EstadoId"].Value);
+                    }
+
+                    if (btnGuardar != null) btnGuardar.Text = "Actualizar";
+                }
             }
+        }
+
+        private void dgvTipoMascota_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
         }
     }
 }

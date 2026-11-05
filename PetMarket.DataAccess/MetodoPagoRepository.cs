@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -17,97 +17,87 @@ namespace PetMarket.DataAccess
 
         public List<MetodoPago> SelectAll()
         {
-            List<MetodoPago> result = new List<MetodoPago>();
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<MetodoPago>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMetodoPagoSelectAll", conn))
+                using (var command = new SqlCommand("spMetodoPagoSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (dr.Read())
-                        {
-                            MetodoPago entity = new MetodoPago
-                            {
-                                MetodoPagoId = dr.GetInt32(dr.GetOrdinal("MetodoPagoId")),
-                                Nombre = dr.GetString(dr.GetOrdinal("Nombre")),
-                                Descripcion = dr.IsDBNull(dr.GetOrdinal("Descripcion")) ? string.Empty : dr.GetString(dr.GetOrdinal("Descripcion")),
-                                EstadoId = dr.GetInt32(dr.GetOrdinal("EstadoId"))
-                            };
+                        int idOrd = reader.GetOrdinal("MetodoPagoId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int descOrd = reader.GetOrdinal("Descripcion");
+                        int estOrd = reader.GetOrdinal("EstadoId");
 
-                            result.Add(entity);
+                        while (reader.Read())
+                        {
+                            lista.Add(new MetodoPago
+                            {
+                                MetodoPagoId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Descripcion = reader.IsDBNull(descOrd) ? string.Empty : reader.GetString(descOrd),
+                                EstadoId = reader.GetInt32(estOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(MetodoPago entity)
+        public int Insert(MetodoPago metodoPago)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMetodoPagoInsert", conn))
+                using (var command = new SqlCommand("spMetodoPagoInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", metodoPago.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)metodoPago.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", metodoPago.EstadoId);
 
-                    conn.Open();
-                    object res = cmd.ExecuteScalar();
-                    result = (res != null && res != DBNull.Value) ? Convert.ToInt32(res) : 0;
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
                 }
             }
-
-            return result;
         }
 
-        public bool Update(MetodoPago entity)
+        public bool Update(MetodoPago metodoPago)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMetodoPagoUpdate", conn))
+                using (var command = new SqlCommand("spMetodoPagoUpdate", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@MetodoPagoId", entity.MetodoPagoId);
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@MetodoPagoId", metodoPago.MetodoPagoId);
+                    command.Parameters.AddWithValue("@Nombre", metodoPago.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)metodoPago.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", metodoPago.EstadoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
 
         public bool Delete(int metodoPagoId)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMetodoPagoDelete", conn))
+                using (var command = new SqlCommand("spMetodoPagoDelete", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@MetodoPagoId", metodoPagoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@MetodoPagoId", metodoPagoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
     }
 }

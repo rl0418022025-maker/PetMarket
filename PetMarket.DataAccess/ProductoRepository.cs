@@ -17,61 +17,103 @@ namespace PetMarket.DataAccess
 
         public List<Producto> SelectAll()
         {
-            List<Producto> result = null;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Producto>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProductoSelectAll", conn))
+                using (var command = new SqlCommand("spProductoSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = new List<Producto>();
-
-                        while (dr.Read())
+                        while (reader.Read())
                         {
-                            Producto entity = new Producto();
-                            entity.ProductoId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.PrecioVenta = dr.GetDecimal(2);
-                            entity.StockMinimo = dr.GetInt32(3);
-                            entity.CategoriaId = dr.GetInt32(4);
-                            entity.MarcaId = dr.GetInt32(5);
-                            entity.EstadoId = dr.GetInt32(6);
-
-                            result.Add(entity);
+                            lista.Add(new Producto
+                            {
+                                ProductoId = reader.GetInt32(reader.GetOrdinal("ProductoId")),
+                                Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                                Descripcion = reader.IsDBNull(reader.GetOrdinal("Descripcion")) ? string.Empty : reader.GetString(reader.GetOrdinal("Descripcion")),
+                                Precio = reader.GetDecimal(reader.GetOrdinal("Precio")),
+                                Stock = reader.GetInt32(reader.GetOrdinal("Stock")),
+                                CategoriaId = reader.GetInt32(reader.GetOrdinal("CategoriaId")),
+                                MarcaId = reader.GetInt32(reader.GetOrdinal("MarcaId")),
+                                EstadoId = reader.GetInt32(reader.GetOrdinal("EstadoId"))
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Producto entity)
+        public int Insert(Producto producto)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            int nuevoId = 0;
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProductoInsert", conn))
+                using (var command = new SqlCommand("spProductoInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Precio", entity.PrecioVenta);
-                    cmd.Parameters.AddWithValue("@Stock", entity.StockMinimo);
-                    cmd.Parameters.AddWithValue("@CategoriaId", entity.CategoriaId);
-                    cmd.Parameters.AddWithValue("@MarcaId", entity.MarcaId);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", producto.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)producto.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Precio", producto.Precio);
+                    command.Parameters.AddWithValue("@Stock", producto.Stock);
+                    command.Parameters.AddWithValue("@CategoriaId", producto.CategoriaId);
+                    command.Parameters.AddWithValue("@MarcaId", producto.MarcaId);
+                    command.Parameters.AddWithValue("@EstadoId", producto.EstadoId);
 
-                    conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    if (result != null && int.TryParse(result.ToString(), out var id))
+                    {
+                        nuevoId = id;
+                    }
                 }
             }
+            return nuevoId;
+        }
 
-            return result;
+        public bool Update(Producto producto)
+        {
+            bool actualizado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spProductoUpdate", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ProductoId", producto.ProductoId);
+                    command.Parameters.AddWithValue("@Nombre", producto.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)producto.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Precio", producto.Precio);
+                    command.Parameters.AddWithValue("@Stock", producto.Stock);
+                    command.Parameters.AddWithValue("@CategoriaId", producto.CategoriaId);
+                    command.Parameters.AddWithValue("@MarcaId", producto.MarcaId);
+                    command.Parameters.AddWithValue("@EstadoId", producto.EstadoId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    actualizado = filasAfectadas > 0;
+                }
+            }
+            return actualizado;
+        }
+
+        public bool Delete(int productoId)
+        {
+            bool eliminado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spProductoDelete", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ProductoId", productoId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    eliminado = filasAfectadas > 0;
+                }
+            }
+            return eliminado;
         }
     }
 }

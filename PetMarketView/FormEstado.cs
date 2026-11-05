@@ -9,6 +9,7 @@ namespace PetMarketView
     public partial class FormEstado : Form
     {
         private readonly EstadoBL _estadoBL;
+        private int idEstadoSeleccionado = 0;
 
         public FormEstado()
         {
@@ -21,13 +22,20 @@ namespace PetMarketView
         private void FormEstado_Load(object sender, EventArgs e)
         {
             CargarEstados();
+            LimpiarFormulario();
         }
 
         private void CargarEstados()
         {
             try
             {
+                dgvEstados.DataSource = null;
                 dgvEstados.DataSource = _estadoBL.SelectAll();
+
+                if (dgvEstados.Columns["EstadoId"] != null)
+                {
+                    dgvEstados.Columns["EstadoId"].HeaderText = "ID";
+                }
             }
             catch (Exception ex)
             {
@@ -52,17 +60,34 @@ namespace PetMarketView
                     Descripcion = txtDescripcion.Text.Trim()
                 };
 
-                int resultado = _estadoBL.Insert(estado);
-
-                if (resultado > 0)
+                if (idEstadoSeleccionado == 0)
                 {
-                    MessageBox.Show("Estado guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarFormulario();
-                    CargarEstados();
+                    int resultado = _estadoBL.Insert(estado);
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Estado guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarFormulario();
+                        CargarEstados();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo guardar el estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo guardar el estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    estado.EstadoId = idEstadoSeleccionado;
+                    bool actualizado = _estadoBL.Update(estado);
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Estado actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarFormulario();
+                        CargarEstados();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar el estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
             }
             catch (Exception ex)
@@ -78,25 +103,39 @@ namespace PetMarketView
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvEstados.SelectedRows.Count > 0)
-            {
-                DialogResult confirmacion = MessageBox.Show(
-                    "¿Está seguro de que desea eliminar el estado seleccionado?",
-                    "Confirmar Eliminación",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (confirmacion == DialogResult.Yes)
-                {
-                    MessageBox.Show("Acción de eliminación procesada.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarFormulario();
-                    CargarEstados();
-                }
-            }
-            else
+            if (idEstadoSeleccionado == 0)
             {
                 MessageBox.Show("Seleccione una fila de la tabla para eliminar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult confirmacion = MessageBox.Show(
+                "¿Está seguro de que desea eliminar el estado seleccionado?",
+                "Confirmar Eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirmacion == DialogResult.Yes)
+            {
+                try
+                {
+                    bool eliminado = _estadoBL.Delete(idEstadoSeleccionado);
+                    if (eliminado)
+                    {
+                        MessageBox.Show("Estado eliminado correctamente.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarFormulario();
+                        CargarEstados();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo eliminar el estado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al intentar eliminar: " + ex.Message, "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -104,12 +143,34 @@ namespace PetMarketView
         {
             txtNombre.Clear();
             txtDescripcion.Clear();
+            idEstadoSeleccionado = 0;
+            if (btnGuardar != null) btnGuardar.Text = "Guardar";
+            dgvEstados.ClearSelection();
             txtNombre.Focus();
+        }
+
+        private void dgvEstados_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow fila = dgvEstados.Rows[e.RowIndex];
+
+                if (fila.Cells["EstadoId"].Value != null)
+                {
+                    idEstadoSeleccionado = Convert.ToInt32(fila.Cells["EstadoId"].Value);
+                    txtNombre.Text = Convert.ToString(fila.Cells["Nombre"].Value);
+                    txtDescripcion.Text = Convert.ToString(fila.Cells["Descripcion"].Value);
+                    if (btnGuardar != null) btnGuardar.Text = "Actualizar";
+                }
+            }
         }
 
         private void txtDescripcion_TextChanged(object sender, EventArgs e)
         {
+        }
 
+        private void dgvEstados_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
         }
     }
 }

@@ -10,6 +10,7 @@ namespace PetMarketView
     {
         private readonly MarcaBL _marcaBL;
         private readonly EstadoBL _estadoBL;
+        private int idMarcaSeleccionada = 0;
 
         public FormMarca()
         {
@@ -24,6 +25,7 @@ namespace PetMarketView
         {
             CargarEstados();
             CargarMarcas();
+            LimpiarCampos();
         }
 
         private void CargarEstados()
@@ -41,6 +43,7 @@ namespace PetMarketView
 
         private void CargarMarcas()
         {
+            dgvMarcas.DataSource = null;
             dgvMarcas.DataSource = _marcaBL.SelectAll();
 
             if (dgvMarcas.Columns["MarcaId"] != null)
@@ -58,10 +61,11 @@ namespace PetMarketView
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
                 MessageBox.Show("Ingrese el nombre de la marca.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNombre.Focus();
                 return;
             }
 
-            int estadoId = 1; // Estado activo por defecto si aún no pones el ComboBox en el diseño
+            int estadoId = 1;
             if (Controls.Find("cboEstado", true).Length > 0)
             {
                 ComboBox cboEstado = (ComboBox)Controls.Find("cboEstado", true)[0];
@@ -73,24 +77,43 @@ namespace PetMarketView
 
             try
             {
-                Marca nuevaMarca = new Marca
+                Marca marca = new Marca
                 {
                     Nombre = txtNombre.Text.Trim(),
                     Descripcion = txtDescripcion.Text.Trim(),
                     EstadoId = estadoId
                 };
 
-                int resultado = _marcaBL.Insert(nuevaMarca);
-
-                if (resultado > 0)
+                if (idMarcaSeleccionada == 0)
                 {
-                    MessageBox.Show("Marca guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarCampos();
-                    CargarMarcas();
+                    int resultado = _marcaBL.Insert(marca);
+
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Marca guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarMarcas();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo guardar la marca.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo guardar la marca.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    marca.MarcaId = idMarcaSeleccionada;
+                    bool actualizado = _marcaBL.Update(marca);
+
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Marca actualizada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarMarcas();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar la marca.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -101,16 +124,14 @@ namespace PetMarketView
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvMarcas.CurrentRow == null || dgvMarcas.CurrentRow.DataBoundItem == null)
+            if (idMarcaSeleccionada == 0)
             {
                 MessageBox.Show("Seleccione una marca de la lista para eliminar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            Marca seleccionada = (Marca)dgvMarcas.CurrentRow.DataBoundItem;
-
             DialogResult confirmacion = MessageBox.Show(
-                $"¿Está seguro de que desea eliminar la marca '{seleccionada.Nombre}'?",
+                $"¿Está seguro de que desea eliminar la marca seleccionada?",
                 "Confirmar eliminación",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -120,7 +141,7 @@ namespace PetMarketView
             {
                 try
                 {
-                    int resultado = _marcaBL.Delete(seleccionada.MarcaId);
+                    int resultado = _marcaBL.Delete(idMarcaSeleccionada);
 
                     if (resultado > 0)
                     {
@@ -149,6 +170,7 @@ namespace PetMarketView
         {
             txtNombre.Clear();
             txtDescripcion.Clear();
+            idMarcaSeleccionada = 0;
 
             if (Controls.Find("cboEstado", true).Length > 0)
             {
@@ -156,7 +178,37 @@ namespace PetMarketView
                 cboEstado.SelectedIndex = -1;
             }
 
+            if (btnGuardar != null) btnGuardar.Text = "Guardar";
+            dgvMarcas.ClearSelection();
             txtNombre.Focus();
+        }
+
+        private void dgvMarcas_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow fila = dgvMarcas.Rows[e.RowIndex];
+
+                if (fila.Cells["MarcaId"].Value != null)
+                {
+                    idMarcaSeleccionada = Convert.ToInt32(fila.Cells["MarcaId"].Value);
+                    txtNombre.Text = Convert.ToString(fila.Cells["Nombre"].Value);
+                    txtDescripcion.Text = Convert.ToString(fila.Cells["Descripcion"].Value);
+
+                    if (Controls.Find("cboEstado", true).Length > 0 && fila.Cells["EstadoId"].Value != null)
+                    {
+                        ComboBox cboEstado = (ComboBox)Controls.Find("cboEstado", true)[0];
+                        cboEstado.SelectedValue = Convert.ToInt32(fila.Cells["EstadoId"].Value);
+                    }
+
+                    if (btnGuardar != null) btnGuardar.Text = "Actualizar";
+                }
+            }
+        }
+
+        private void dgvMarcas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

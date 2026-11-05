@@ -1,54 +1,36 @@
-﻿using Entities;
-using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class MarcaBL
     {
-        private readonly MarcaRepository _repository;
+        private readonly MarcaRepository _marcaRepository;
 
-        public MarcaBL(MarcaRepository repository)
+        public MarcaBL(MarcaRepository marcaRepository)
         {
-            _repository = repository;
+            _marcaRepository = marcaRepository;
         }
 
         public List<Marca> SelectAll()
         {
-            try
-            {
-                return _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _marcaRepository.SelectAll();
         }
 
-        public int Insert(Marca entity)
+        public int Insert(Marca marca)
         {
-            try
-            {
-                return _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _marcaRepository.Insert(marca);
         }
 
-        public int Delete(int id)
+        public bool Update(Marca marca)
         {
-            try
-            {
-                return _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _marcaRepository.Update(marca);
+        }
+
+        public int Delete(int marcaId)
+        {
+            return _marcaRepository.Delete(marcaId);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -17,76 +17,89 @@ namespace PetMarket.DataAccess
 
         public List<Categoria> SelectAll()
         {
-            List<Categoria> result = new List<Categoria>();
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Categoria>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                // Usamos el procedimiento sp_ListarCategorias que hace el JOIN con Estado
-                using (SqlCommand cmd = new SqlCommand("sp_ListarCategorias", conn))
+                using (var command = new SqlCommand("spCategoriaSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (dr.Read())
-                        {
-                            Categoria entity = new Categoria
-                            {
-                                CategoriaId = Convert.ToInt32(dr["CategoriaId"]),
-                                Nombre = dr["Nombre"].ToString(),
-                                Descripcion = dr["Descripcion"] != DBNull.Value ? dr["Descripcion"].ToString() : string.Empty,
-                                EstadoId = Convert.ToInt32(dr["EstadoId"]),
-                                // Leemos la columna devuelta por el INNER JOIN de SQL:
-                                NombreEstado = dr["NombreEstado"] != DBNull.Value ? dr["NombreEstado"].ToString() : string.Empty
-                            };
+                        int idOrd = reader.GetOrdinal("CategoriaId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int descOrd = reader.GetOrdinal("Descripcion");
+                        int estOrd = reader.GetOrdinal("EstadoId");
+                        int nomEstOrd = reader.GetOrdinal("NombreEstado");
 
-                            result.Add(entity);
+                        while (reader.Read())
+                        {
+                            lista.Add(new Categoria
+                            {
+                                CategoriaId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Descripcion = reader.IsDBNull(descOrd) ? string.Empty : reader.GetString(descOrd),
+                                EstadoId = reader.GetInt32(estOrd),
+                                NombreEstado = reader.GetString(nomEstOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Categoria entity)
+        public int Insert(Categoria categoria)
         {
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("sp_InsertarCategoria", conn))
+                using (var command = new SqlCommand("spCategoriaInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", categoria.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)categoria.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", categoria.EstadoId);
 
-                    conn.Open();
-                    int rows = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
+                }
+            }
+        }
 
-                    // Si se ejecutó correctamente sin lanzar excepción, retornamos 1
-                    return rows != 0 ? 1 : 1;
+        public bool Update(Categoria categoria)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spCategoriaUpdate", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@CategoriaId", categoria.CategoriaId);
+                    command.Parameters.AddWithValue("@Nombre", categoria.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)categoria.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", categoria.EstadoId);
+
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
         }
 
         public int Delete(int categoriaId)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("sp_EliminarCategoria", conn))
+                using (var command = new SqlCommand("spCategoriaDelete", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@CategoriaId", categoriaId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@CategoriaId", categoriaId);
 
-                    conn.Open();
-                    result = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas;
                 }
             }
-
-            return result;
         }
     }
 }

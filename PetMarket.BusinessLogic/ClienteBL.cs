@@ -1,48 +1,37 @@
 ﻿using Entities;
 using PetMarket.DataAccess;
 using PetMarket.Entities;
-using System;
 using System.Collections.Generic;
 
 namespace PetMarket.BusinessLogic
 {
     public class ClienteBL
     {
-        private readonly ClienteRepository _repository;
+        private readonly ClienteRepository _clienteRepository;
 
-        public ClienteBL(ClienteRepository repository)
+        public ClienteBL(ClienteRepository clienteRepository)
         {
-            _repository = repository;
+            _clienteRepository = clienteRepository;
         }
 
         public List<Cliente> SelectAll()
         {
-            List<Cliente> result = null;
-            try
-            {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _clienteRepository.SelectAll();
         }
 
-        public int Insert(Cliente entity)
+        public int Insert(Cliente cliente)
         {
-            int result;
-            try
-            {
-                result = _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _clienteRepository.Insert(cliente);
+        }
 
-            return result;
+        public bool Update(Cliente cliente)
+        {
+            return _clienteRepository.Update(cliente);
+        }
+
+        public bool Delete(int clienteId)
+        {
+            return _clienteRepository.Delete(clienteId);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace PetMarketView
     {
         private readonly CategoriaBL _categoriaBL;
         private readonly EstadoBL _estadoBL;
+        private int idCategoriaSeleccionada = 0;
 
         public FormCategoria()
         {
@@ -24,6 +25,7 @@ namespace PetMarketView
         {
             CargarEstados();
             CargarCategorias();
+            LimpiarCampos();
         }
 
         private void CargarEstados()
@@ -37,6 +39,7 @@ namespace PetMarketView
 
         private void CargarCategorias()
         {
+            dgvCategorias.DataSource = null;
             dgvCategorias.DataSource = _categoriaBL.SelectAll();
 
             // Ocultar IDs innecesarios en la tabla visual
@@ -56,35 +59,56 @@ namespace PetMarketView
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
                 MessageBox.Show("Ingrese un nombre de categoría.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNombre.Focus();
                 return;
             }
 
             if (cboEstado.SelectedValue == null)
             {
                 MessageBox.Show("Seleccione un estado.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboEstado.Focus();
                 return;
             }
 
             try
             {
-                Categoria nuevaCategoria = new Categoria
+                Categoria categoria = new Categoria
                 {
                     Nombre = txtNombre.Text.Trim(),
                     Descripcion = txtDescripcion.Text.Trim(),
                     EstadoId = Convert.ToInt32(cboEstado.SelectedValue)
                 };
 
-                int resultado = _categoriaBL.Insert(nuevaCategoria);
-
-                if (resultado > 0)
+                if (idCategoriaSeleccionada == 0)
                 {
-                    MessageBox.Show("Categoría guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LimpiarCampos();
-                    CargarCategorias();
+                    int resultado = _categoriaBL.Insert(categoria);
+
+                    if (resultado > 0)
+                    {
+                        MessageBox.Show("Categoría guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarCategorias();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo guardar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo guardar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    categoria.CategoriaId = idCategoriaSeleccionada;
+                    bool actualizado = _categoriaBL.Update(categoria);
+
+                    if (actualizado)
+                    {
+                        MessageBox.Show("Categoría actualizada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarCategorias();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo actualizar la categoría.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -95,16 +119,14 @@ namespace PetMarketView
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvCategorias.CurrentRow == null || dgvCategorias.CurrentRow.DataBoundItem == null)
+            if (idCategoriaSeleccionada == 0)
             {
                 MessageBox.Show("Seleccione una categoría de la lista para eliminar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            Categoria seleccionada = (Categoria)dgvCategorias.CurrentRow.DataBoundItem;
-
             DialogResult confirmacion = MessageBox.Show(
-                $"¿Está seguro de que desea eliminar la categoría '{seleccionada.Nombre}'?",
+                $"¿Está seguro de que desea eliminar la categoría seleccionada?",
                 "Confirmar eliminación",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -114,7 +136,7 @@ namespace PetMarketView
             {
                 try
                 {
-                    int resultado = _categoriaBL.Delete(seleccionada.CategoriaId);
+                    int resultado = _categoriaBL.Delete(idCategoriaSeleccionada);
 
                     if (resultado > 0)
                     {
@@ -144,7 +166,32 @@ namespace PetMarketView
             txtNombre.Clear();
             txtDescripcion.Clear();
             cboEstado.SelectedIndex = -1;
+            idCategoriaSeleccionada = 0;
+            if (btnGuardar != null) btnGuardar.Text = "Guardar";
+            dgvCategorias.ClearSelection();
             txtNombre.Focus();
+        }
+
+        private void dgvCategorias_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow fila = dgvCategorias.Rows[e.RowIndex];
+
+                if (fila.Cells["CategoriaId"].Value != null)
+                {
+                    idCategoriaSeleccionada = Convert.ToInt32(fila.Cells["CategoriaId"].Value);
+                    txtNombre.Text = Convert.ToString(fila.Cells["Nombre"].Value);
+                    txtDescripcion.Text = Convert.ToString(fila.Cells["Descripcion"].Value);
+
+                    if (fila.Cells["EstadoId"].Value != null)
+                    {
+                        cboEstado.SelectedValue = Convert.ToInt32(fila.Cells["EstadoId"].Value);
+                    }
+
+                    if (btnGuardar != null) btnGuardar.Text = "Actualizar";
+                }
+            }
         }
 
         private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)

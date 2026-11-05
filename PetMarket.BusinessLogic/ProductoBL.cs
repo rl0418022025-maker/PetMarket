@@ -1,47 +1,36 @@
 ﻿using PetMarket.DataAccess;
 using PetMarket.Entities;
-using System;
 using System.Collections.Generic;
 
 namespace PetMarket.BusinessLogic
 {
     public class ProductoBL
     {
-        private readonly ProductoRepository _repository;
+        private readonly ProductoRepository _productoRepository;
 
-        public ProductoBL(ProductoRepository repository)
+        public ProductoBL(ProductoRepository productoRepository)
         {
-            _repository = repository;
+            _productoRepository = productoRepository;
         }
 
         public List<Producto> SelectAll()
         {
-            List<Producto> result = null;
-            try
-            {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _productoRepository.SelectAll();
         }
 
-        public int Insert(Producto entity)
+        public int Insert(Producto producto)
         {
-            int result;
-            try
-            {
-                result = _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _productoRepository.Insert(producto);
+        }
 
-            return result;
+        public bool Update(Producto producto)
+        {
+            return _productoRepository.Update(producto);
+        }
+
+        public bool Delete(int productoId)
+        {
+            return _productoRepository.Delete(productoId);
         }
     }
 }

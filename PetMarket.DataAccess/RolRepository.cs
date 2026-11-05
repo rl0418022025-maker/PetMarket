@@ -1,9 +1,8 @@
-﻿using Entities;
-using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -18,99 +17,87 @@ namespace PetMarket.DataAccess
 
         public List<Rol> SelectAll()
         {
-            List<Rol> result = new List<Rol>();
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Rol>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spRolSelectAll", conn))
+                using (var command = new SqlCommand("spRolSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (dr.Read())
+                        int idOrd = reader.GetOrdinal("RolId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int descOrd = reader.GetOrdinal("Descripcion");
+                        int estOrd = reader.GetOrdinal("EstadoId");
+
+                        while (reader.Read())
                         {
-                            Rol entity = new Rol
+                            lista.Add(new Rol
                             {
-                                RolId = dr.GetInt32(0),
-                                Nombre = dr.GetString(1),
-                                Descripcion = dr.IsDBNull(2) ? string.Empty : dr.GetString(2),
-                                EstadoId = dr.GetInt32(3)
-                            };
-                            result.Add(entity);
+                                RolId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Descripcion = reader.IsDBNull(descOrd) ? string.Empty : reader.GetString(descOrd),
+                                EstadoId = reader.GetInt32(estOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Rol entity)
+        public int Insert(Rol rol)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spRolInsert", conn))
+                using (var command = new SqlCommand("spRolInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", rol.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)rol.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", rol.EstadoId);
 
-                    conn.Open();
-                    object scalar = cmd.ExecuteScalar();
-                    if (scalar != null && scalar != DBNull.Value)
-                    {
-                        result = Convert.ToInt32(scalar);
-                    }
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
                 }
             }
-
-            return result;
         }
 
-        public bool Update(Rol entity)
+        public bool Update(Rol rol)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spRolUpdate", conn))
+                using (var command = new SqlCommand("spRolUpdate", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RolId", entity.RolId);
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", string.IsNullOrEmpty(entity.Descripcion) ? (object)DBNull.Value : entity.Descripcion);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@RolId", rol.RolId);
+                    command.Parameters.AddWithValue("@Nombre", rol.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)rol.Descripcion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", rol.EstadoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
 
-        public bool Delete(int id)
+        public bool Delete(int rolId)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spRolDelete", conn))
+                using (var command = new SqlCommand("spRolDelete", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RolId", id);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@RolId", rolId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
     }
 }

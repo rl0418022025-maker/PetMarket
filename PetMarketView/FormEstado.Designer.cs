@@ -128,6 +128,7 @@
             dgvEstados.RowHeadersWidth = 51;
             dgvEstados.Size = new System.Drawing.Size(585, 209);
             dgvEstados.TabIndex = 8;
+            dgvEstados.CellContentClick += dgvEstados_CellContentClick;
             // 
             // FormEstado
             // 

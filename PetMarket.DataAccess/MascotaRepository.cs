@@ -1,5 +1,4 @@
-﻿
-using Entities;
+﻿using Entities;
 using Microsoft.Data.SqlClient;
 using PetMarket.Entities;
 using System;
@@ -19,59 +18,100 @@ namespace PetMarket.DataAccess
 
         public List<Mascota> SelectAll()
         {
-            List<Mascota> result = null;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Mascota>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMascotaSelectAll", conn))
+                using (var command = new SqlCommand("spMascotaSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = new List<Mascota>();
-
-                        while (dr.Read())
+                        while (reader.Read())
                         {
-                            Mascota entity = new Mascota();
-                            entity.MascotaId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.Edad = dr.GetString(2);
-                            entity.ClienteId = dr.GetInt32(3);
-                            entity.TipoMascotaId = dr.GetInt32(4);
-                            entity.EstadoId = dr.GetInt32(5);
-
-                            result.Add(entity);
+                            lista.Add(new Mascota
+                            {
+                                MascotaId = reader.GetInt32(reader.GetOrdinal("MascotaId")),
+                                Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                                Especie = reader.IsDBNull(reader.GetOrdinal("Especie")) ? string.Empty : reader.GetString(reader.GetOrdinal("Especie")),
+                                Edad = reader.IsDBNull(reader.GetOrdinal("Edad")) ? string.Empty : reader.GetString(reader.GetOrdinal("Edad")),
+                                ClienteId = reader.GetInt32(reader.GetOrdinal("ClienteId")),
+                                TipoMascotaId = reader.GetInt32(reader.GetOrdinal("TipoMascotaId")),
+                                EstadoId = reader.GetInt32(reader.GetOrdinal("EstadoId"))
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Mascota entity)
+        public int Insert(Mascota mascota)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            int nuevoId = 0;
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spMascotaInsert", conn))
+                using (var command = new SqlCommand("spMascotaInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Edad", entity.Edad);
-                    cmd.Parameters.AddWithValue("@ClienteId", entity.ClienteId);
-                    cmd.Parameters.AddWithValue("@TipoMascotaId", entity.TipoMascotaId);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", mascota.Nombre);
+                    command.Parameters.AddWithValue("@Especie", (object)mascota.Especie ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Edad", (object)mascota.Edad ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@ClienteId", mascota.ClienteId);
+                    command.Parameters.AddWithValue("@TipoMascotaId", mascota.TipoMascotaId);
+                    command.Parameters.AddWithValue("@EstadoId", mascota.EstadoId);
 
-                    conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    if (result != null && int.TryParse(result.ToString(), out var id))
+                    {
+                        nuevoId = id;
+                    }
                 }
             }
+            return nuevoId;
+        }
 
-            return result;
+        public bool Update(Mascota mascota)
+        {
+            bool actualizado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spMascotaUpdate", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@MascotaId", mascota.MascotaId);
+                    command.Parameters.AddWithValue("@Nombre", mascota.Nombre);
+                    command.Parameters.AddWithValue("@Especie", (object)mascota.Especie ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Edad", (object)mascota.Edad ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@ClienteId", mascota.ClienteId);
+                    command.Parameters.AddWithValue("@TipoMascotaId", mascota.TipoMascotaId);
+                    command.Parameters.AddWithValue("@EstadoId", mascota.EstadoId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    actualizado = filasAfectadas > 0;
+                }
+            }
+            return actualizado;
+        }
+
+        public bool Delete(int mascotaId)
+        {
+            bool eliminado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spMascotaDelete", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@MascotaId", mascotaId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    eliminado = filasAfectadas > 0;
+                }
+            }
+            return eliminado;
         }
     }
 }

@@ -1,66 +1,36 @@
-﻿using Entities;
-using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class EmpleadoBL
     {
-        private readonly EmpleadoRepository _repository;
+        private readonly EmpleadoRepository _empleadoRepository;
 
-        public EmpleadoBL(EmpleadoRepository repository)
+        public EmpleadoBL(EmpleadoRepository empleadoRepository)
         {
-            _repository = repository;
+            _empleadoRepository = empleadoRepository;
         }
 
         public List<Empleado> SelectAll()
         {
-            try
-            {
-                return _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _empleadoRepository.SelectAll();
         }
 
-        public int Insert(Empleado entity)
+        public int Insert(Empleado empleado)
         {
-            try
-            {
-                return _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _empleadoRepository.Insert(empleado);
         }
 
-        public bool Update(Empleado entity)
+        public bool Update(Empleado empleado)
         {
-            try
-            {
-                return _repository.Update(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _empleadoRepository.Update(empleado);
         }
 
-        public bool Delete(int id)
+        public bool Delete(int empleadoId)
         {
-            try
-            {
-                return _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _empleadoRepository.Delete(empleadoId);
         }
     }
 }

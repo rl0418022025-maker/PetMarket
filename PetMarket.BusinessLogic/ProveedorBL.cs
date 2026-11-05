@@ -1,77 +1,36 @@
-﻿using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class ProveedorBL
     {
-        private readonly ProveedorRepository _repository;
+        private readonly ProveedorRepository _proveedorRepository;
 
-        public ProveedorBL(ProveedorRepository repository)
+        public ProveedorBL(ProveedorRepository proveedorRepository)
         {
-            _repository = repository;
+            _proveedorRepository = proveedorRepository;
         }
 
         public List<Proveedor> SelectAll()
         {
-            List<Proveedor> result = null;
-            try
-            {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _proveedorRepository.SelectAll();
         }
 
-        public int Insert(Proveedor entity)
+        public int Insert(Proveedor proveedor)
         {
-            int result;
-            try
-            {
-                result = _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _proveedorRepository.Insert(proveedor);
         }
 
-        public bool Update(Proveedor entity)
+        public bool Update(Proveedor proveedor)
         {
-            bool result;
-            try
-            {
-                result = _repository.Update(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _proveedorRepository.Update(proveedor);
         }
 
-        public bool Delete(int id)
+        public bool Delete(int proveedorId)
         {
-            bool result;
-            try
-            {
-                result = _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _proveedorRepository.Delete(proveedorId);
         }
     }
 }

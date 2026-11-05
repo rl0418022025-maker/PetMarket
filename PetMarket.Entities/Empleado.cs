@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Entities
+namespace PetMarket.Entities
 {
     public class Empleado
     {
         public int EmpleadoId { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
-        public string DUI { get; set; }
-        public string Telefono { get; set; }
-        public string Correo { get; set; }
-        public string Cargo { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string DUI { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
+        public string Correo { get; set; } = string.Empty;
+        public string Cargo { get; set; } = string.Empty;
         public int EstadoId { get; set; }
     }
 }

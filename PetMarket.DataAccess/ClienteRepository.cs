@@ -18,53 +18,103 @@ namespace PetMarket.DataAccess
 
         public List<Cliente> SelectAll()
         {
-            List<Cliente> result = null;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Cliente>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spClienteSelectAll", conn))
+                using (var command = new SqlCommand("spClienteSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = new List<Cliente>();
-
-                        while (dr.Read())
+                        while (reader.Read())
                         {
-                            Cliente entity = new Cliente();
-                            entity.ClienteId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.EstadoId = dr.GetInt32(2);
-
-                            result.Add(entity);
+                            lista.Add(new Cliente
+                            {
+                                ClienteId = reader.GetInt32(reader.GetOrdinal("ClienteId")),
+                                Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                                Apellido = reader.GetString(reader.GetOrdinal("Apellido")),
+                                DUI = reader.GetString(reader.GetOrdinal("DUI")),
+                                Telefono = reader.GetString(reader.GetOrdinal("Telefono")),
+                                Correo = reader.IsDBNull(reader.GetOrdinal("Correo")) ? string.Empty : reader.GetString(reader.GetOrdinal("Correo")),
+                                Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? string.Empty : reader.GetString(reader.GetOrdinal("Direccion")),
+                                EstadoId = reader.GetInt32(reader.GetOrdinal("EstadoId"))
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Cliente entity)
+        public int Insert(Cliente cliente)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            int nuevoId = 0;
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spClienteInsert", conn))
+                using (var command = new SqlCommand("spClienteInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", cliente.Nombre);
+                    command.Parameters.AddWithValue("@Apellido", cliente.Apellido);
+                    command.Parameters.AddWithValue("@DUI", cliente.DUI);
+                    command.Parameters.AddWithValue("@Telefono", cliente.Telefono);
+                    command.Parameters.AddWithValue("@Correo", (object)cliente.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Direccion", (object)cliente.Direccion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", cliente.EstadoId);
 
-                    conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    if (result != null && int.TryParse(result.ToString(), out var id))
+                    {
+                        nuevoId = id;
+                    }
                 }
             }
+            return nuevoId;
+        }
 
-            return result;
+        public bool Update(Cliente cliente)
+        {
+            bool actualizado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spClienteUpdate", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ClienteId", cliente.ClienteId);
+                    command.Parameters.AddWithValue("@Nombre", cliente.Nombre);
+                    command.Parameters.AddWithValue("@Apellido", cliente.Apellido);
+                    command.Parameters.AddWithValue("@DUI", cliente.DUI);
+                    command.Parameters.AddWithValue("@Telefono", cliente.Telefono);
+                    command.Parameters.AddWithValue("@Correo", (object)cliente.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Direccion", (object)cliente.Direccion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", cliente.EstadoId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    actualizado = filasAfectadas > 0;
+                }
+            }
+            return actualizado;
+        }
+
+        public bool Delete(int clienteId)
+        {
+            bool eliminado = false;
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spClienteDelete", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ClienteId", clienteId);
+
+                    connection.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    eliminado = filasAfectadas > 0;
+                }
+            }
+            return eliminado;
         }
     }
 }

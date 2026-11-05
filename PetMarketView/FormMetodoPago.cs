@@ -1,8 +1,9 @@
-﻿using PetMarket.BusinessLogic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using PetMarket.BusinessLogic;
 using PetMarket.DataAccess;
 using PetMarket.Entities;
-using System;
-using System.Windows.Forms;
 
 namespace PetMarketView
 {
@@ -10,6 +11,13 @@ namespace PetMarketView
     {
         private readonly MetodoPagoBL _metodoPagoBL;
         private int idMetodoPagoSeleccionado = 0;
+
+        private class OpcionCombo
+        {
+            public string Texto { get; set; } = string.Empty;
+            public int Valor { get; set; }
+            public override string ToString() => Texto;
+        }
 
         public FormMetodoPago()
         {
@@ -21,8 +29,34 @@ namespace PetMarketView
 
         private void FormMetodoPago_Load(object sender, EventArgs e)
         {
+            CargarEstados();
             CargarMetodosPago();
             LimpiarCampos();
+        }
+
+        private void CargarEstados()
+        {
+            try
+            {
+                EstadoBL estadoBL = new EstadoBL(new EstadoRepository(new ConnectionFactory()));
+                txtEstadoId.DataSource = estadoBL.SelectAll();
+                txtEstadoId.DisplayMember = "Nombre";
+                txtEstadoId.ValueMember = "EstadoId";
+                txtEstadoId.SelectedIndex = -1;
+            }
+            catch
+            {
+                List<OpcionCombo> listaEstados = new List<OpcionCombo>
+                {
+                    new OpcionCombo { Texto = "Activo", Valor = 1 },
+                    new OpcionCombo { Texto = "Inactivo", Valor = 2 }
+                };
+
+                txtEstadoId.DataSource = listaEstados;
+                txtEstadoId.DisplayMember = "Texto";
+                txtEstadoId.ValueMember = "Valor";
+                txtEstadoId.SelectedIndex = -1;
+            }
         }
 
         private void CargarMetodosPago()
@@ -32,9 +66,34 @@ namespace PetMarketView
                 dgvMetodosPago.DataSource = null;
                 dgvMetodosPago.DataSource = _metodoPagoBL.SelectAll();
 
+                // 1. Ocultar ID principal
                 if (dgvMetodosPago.Columns["MetodoPagoId"] != null)
                 {
-                    dgvMetodosPago.Columns["MetodoPagoId"].HeaderText = "ID";
+                    dgvMetodosPago.Columns["MetodoPagoId"].Visible = false;
+                }
+
+                // 2. Configurar Nombre
+                if (dgvMetodosPago.Columns["Nombre"] != null)
+                {
+                    dgvMetodosPago.Columns["Nombre"].Visible = true;
+                    dgvMetodosPago.Columns["Nombre"].HeaderText = "Nombre";
+                    dgvMetodosPago.Columns["Nombre"].DisplayIndex = 0;
+                }
+
+                // 3. Configurar Descripcion
+                if (dgvMetodosPago.Columns["Descripcion"] != null)
+                {
+                    dgvMetodosPago.Columns["Descripcion"].Visible = true;
+                    dgvMetodosPago.Columns["Descripcion"].HeaderText = "Descripción";
+                    dgvMetodosPago.Columns["Descripcion"].DisplayIndex = 1;
+                }
+
+                // 4. Mostrar EstadoId
+                if (dgvMetodosPago.Columns["EstadoId"] != null)
+                {
+                    dgvMetodosPago.Columns["EstadoId"].Visible = true;
+                    dgvMetodosPago.Columns["EstadoId"].HeaderText = "Estado (ID)";
+                    dgvMetodosPago.Columns["EstadoId"].DisplayIndex = 2;
                 }
             }
             catch (Exception ex)
@@ -52,16 +111,18 @@ namespace PetMarketView
                 return;
             }
 
-            if (!int.TryParse(txtEstadoId.Text, out int estadoId))
+            if (txtEstadoId.SelectedValue == null)
             {
-                MessageBox.Show("Ingrese un EstadoId válido (número entero).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Seleccione un Estado válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtEstadoId.Focus();
                 return;
             }
 
             try
             {
-                PetMarket.Entities.MetodoPago metodoPago = new PetMarket.Entities.MetodoPago
+                int estadoId = Convert.ToInt32(txtEstadoId.SelectedValue);
+
+                MetodoPago metodoPago = new MetodoPago
                 {
                     Nombre = txtNombre.Text.Trim(),
                     Descripcion = txtDescripcion.Text.Trim(),
@@ -74,6 +135,8 @@ namespace PetMarketView
                     if (resultado > 0)
                     {
                         MessageBox.Show("Método de pago guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarMetodosPago();
                     }
                     else
                     {
@@ -87,15 +150,14 @@ namespace PetMarketView
                     if (actualizado)
                     {
                         MessageBox.Show("Método de pago actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarCampos();
+                        CargarMetodosPago();
                     }
                     else
                     {
                         MessageBox.Show("No se pudo actualizar el método de pago.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
-                CargarMetodosPago();
-                LimpiarCampos();
             }
             catch (Exception ex)
             {
@@ -127,8 +189,8 @@ namespace PetMarketView
                     if (eliminado)
                     {
                         MessageBox.Show("Método de pago eliminado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        CargarMetodosPago();
                         LimpiarCampos();
+                        CargarMetodosPago();
                     }
                     else
                     {
@@ -151,15 +213,19 @@ namespace PetMarketView
         {
             txtNombre.Clear();
             txtDescripcion.Clear();
-            txtEstadoId.Clear();
+            if (txtEstadoId != null) txtEstadoId.SelectedIndex = -1;
+
+            // Reinicio estricto a 0 para asegurar inserciones sucesivas correctas
             idMetodoPagoSeleccionado = 0;
-            btnGuardar.Text = "Guardar";
+
+            if (btnGuardar != null) btnGuardar.Text = "Guardar";
+            if (dgvMetodosPago != null) dgvMetodosPago.ClearSelection();
             txtNombre.Focus();
         }
 
         private void dgvMetodosPago_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dgvMetodosPago.CurrentRow != null)
             {
                 DataGridViewRow fila = dgvMetodosPago.Rows[e.RowIndex];
 
@@ -168,15 +234,28 @@ namespace PetMarketView
                     idMetodoPagoSeleccionado = Convert.ToInt32(fila.Cells["MetodoPagoId"].Value);
                     txtNombre.Text = Convert.ToString(fila.Cells["Nombre"].Value);
                     txtDescripcion.Text = Convert.ToString(fila.Cells["Descripcion"].Value);
-                    txtEstadoId.Text = Convert.ToString(fila.Cells["EstadoId"].Value);
-                    btnGuardar.Text = "Actualizar";
+
+                    var estadoValor = fila.Cells["EstadoId"].Value;
+                    if (estadoValor != null)
+                    {
+                        txtEstadoId.SelectedValue = Convert.ToInt32(estadoValor);
+                    }
+                    else
+                    {
+                        txtEstadoId.SelectedIndex = -1;
+                    }
+
+                    if (btnGuardar != null) btnGuardar.Text = "Actualizar";
                 }
             }
         }
 
         private void dgvMetodosPago_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Evento por defecto del diseñador
+        }
+
+        private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -17,53 +17,83 @@ namespace PetMarket.DataAccess
 
         public List<Estado> SelectAll()
         {
-            List<Estado> result = null;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Estado>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("sp_ListarEstados", conn))
+                using (var command = new SqlCommand("spEstadoSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = new List<Estado>();
+                        int idOrd = reader.GetOrdinal("EstadoId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int descOrd = reader.GetOrdinal("Descripcion");
 
-                        while (dr.Read())
+                        while (reader.Read())
                         {
-                            Estado entity = new Estado();
-                            entity.EstadoId = dr.GetInt32(0);
-                            entity.Nombre = dr.GetString(1);
-                            entity.Descripcion = dr.IsDBNull(2) ? string.Empty : dr.GetString(2);
-
-                            result.Add(entity);
+                            lista.Add(new Estado
+                            {
+                                EstadoId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Descripcion = reader.IsDBNull(descOrd) ? string.Empty : reader.GetString(descOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Estado entity)
+        public int Insert(Estado estado)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEstadoInsert", conn))
+                using (var command = new SqlCommand("spEstadoInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Descripcion", entity.Descripcion ?? (object)DBNull.Value);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", estado.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)estado.Descripcion ?? DBNull.Value);
 
-                    conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
                 }
             }
+        }
 
-            return result;
+        public bool Update(Estado estado)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spEstadoUpdate", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EstadoId", estado.EstadoId);
+                    command.Parameters.AddWithValue("@Nombre", estado.Nombre);
+                    command.Parameters.AddWithValue("@Descripcion", (object)estado.Descripcion ?? DBNull.Value);
+
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
+                }
+            }
+        }
+
+        public bool Delete(int estadoId)
+        {
+            using (var connection = _connectionFactory.CreateConnection())
+            {
+                using (var command = new SqlCommand("spEstadoDelete", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EstadoId", estadoId);
+
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
+                }
+            }
         }
     }
 }

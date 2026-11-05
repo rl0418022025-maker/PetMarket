@@ -1,21 +1,17 @@
-﻿using Entities;
-using PetMarket.BusinessLogic;
+﻿using PetMarket.BusinessLogic;
 using PetMarket.DataAccess;
 using PetMarket.Entities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using ComboBox = System.Windows.Forms.ComboBox;
 
 namespace PetMarketView
 {
     public partial class formRol : Form
     {
         private readonly RolBL _rolBL;
-        private int idRolSeleccionado = 0; // Variable para controlar si es Insertar (0) o Actualizar (>0)
+        private int idRolSeleccionado = 0;
 
         public formRol()
         {
@@ -25,19 +21,53 @@ namespace PetMarketView
             RolRepository rolRepository = new RolRepository(connectionFactory);
             _rolBL = new RolBL(rolRepository);
 
-            // Forzamos la carga al iniciar
-            CargarGrilla();
-            LimpiarControles();
+            CargarEstadosIdDirecto();
         }
 
         private void formRol_Load(object sender, EventArgs e)
         {
+            CargarEstadosIdDirecto();
             CargarGrilla();
             LimpiarControles();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private ComboBox ObtenerComboEstado()
         {
+            // Apuntamos primero a cboEstadoId que es el nombre exacto que tiene en tu diseñador
+            if (cboEstadoId != null)
+                return cboEstadoId;
+
+            if (Controls.Find("cboEstadoId", true).Length > 0)
+                return (ComboBox)Controls.Find("cboEstadoId", true)[0];
+            if (Controls.Find("comboBox1", true).Length > 0)
+                return (ComboBox)Controls.Find("comboBox1", true)[0];
+            if (Controls.Find("cmbEstadoId", true).Length > 0)
+                return (ComboBox)Controls.Find("cmbEstadoId", true)[0];
+
+            foreach (Control ctrl in Controls)
+            {
+                if (ctrl is ComboBox cb) return cb;
+            }
+            return null;
+        }
+
+        private void CargarEstadosIdDirecto()
+        {
+            try
+            {
+                ComboBox cbo = ObtenerComboEstado();
+                if (cbo != null)
+                {
+                    cbo.Items.Clear();
+                    cbo.Items.Add(1);
+                    cbo.Items.Add(2);
+                    cbo.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar los estados: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void CargarGrilla()
@@ -49,9 +79,14 @@ namespace PetMarketView
                     dgvRoles.DataSource = null;
                     dgvRoles.DataSource = _rolBL.SelectAll();
 
-                    // Ocultar el ID internamente en la tabla
                     if (dgvRoles.Columns["RolId"] != null)
                         dgvRoles.Columns["RolId"].Visible = false;
+
+                    if (dgvRoles.Columns["EstadoId"] != null)
+                    {
+                        dgvRoles.Columns["EstadoId"].Visible = true;
+                        dgvRoles.Columns["EstadoId"].HeaderText = "Estado (ID)";
+                    }
                 }
             }
             catch (Exception ex)
@@ -70,6 +105,12 @@ namespace PetMarketView
             if (txtDescripcion != null)
             {
                 txtDescripcion.Clear();
+            }
+
+            ComboBox cbo = ObtenerComboEstado();
+            if (cbo != null)
+            {
+                cbo.SelectedIndex = -1;
             }
 
             if (dgvRoles != null)
@@ -99,15 +140,24 @@ namespace PetMarketView
                 return;
             }
 
+            ComboBox cbo = ObtenerComboEstado();
+            if (cbo == null || cbo.SelectedItem == null)
+            {
+                MessageBox.Show("Seleccione un EstadoId válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (cbo != null) cbo.Focus();
+                return;
+            }
+
             try
             {
-                Rol rol = new Rol();
-                rol.Nombre = txtNombre.Text.Trim();
+                int estadoId = Convert.ToInt32(cbo.SelectedItem);
 
-                // Mapeamos directamente la descripción desde tu caja de texto
-                rol.Descripcion = txtDescripcion != null ? txtDescripcion.Text.Trim() : string.Empty;
-
-                rol.EstadoId = 1; // Por defecto activo
+                Rol rol = new Rol
+                {
+                    Nombre = txtNombre.Text.Trim(),
+                    Descripcion = txtDescripcion != null ? txtDescripcion.Text.Trim() : string.Empty,
+                    EstadoId = estadoId
+                };
 
                 if (idRolSeleccionado == 0)
                 {
@@ -117,6 +167,8 @@ namespace PetMarketView
                     if (resultado > 0)
                     {
                         MessageBox.Show("Rol guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarControles();
+                        CargarGrilla();
                     }
                     else
                     {
@@ -132,15 +184,14 @@ namespace PetMarketView
                     if (actualizado)
                     {
                         MessageBox.Show("Rol actualizado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LimpiarControles();
+                        CargarGrilla();
                     }
                     else
                     {
                         MessageBox.Show("No se pudo actualizar el registro.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
-
-                CargarGrilla();
-                LimpiarControles();
             }
             catch (Exception ex)
             {
@@ -148,10 +199,9 @@ namespace PetMarketView
             }
         }
 
-        // Evento para seleccionar de la tabla y cargar en los controles para actualizar
         private void dgvRoles_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dgvRoles.CurrentRow != null)
             {
                 DataGridViewRow fila = dgvRoles.Rows[e.RowIndex];
 
@@ -160,10 +210,20 @@ namespace PetMarketView
                     idRolSeleccionado = Convert.ToInt32(fila.Cells["RolId"].Value);
                     txtNombre.Text = Convert.ToString(fila.Cells["Nombre"].Value);
 
-                    // Cargamos directamente la descripción evitando valores nulos
                     if (txtDescripcion != null)
                     {
                         txtDescripcion.Text = fila.Cells["Descripcion"].Value != null ? Convert.ToString(fila.Cells["Descripcion"].Value) : string.Empty;
+                    }
+
+                    var estadoValor = fila.Cells["EstadoId"].Value;
+                    ComboBox cbo = ObtenerComboEstado();
+                    if (estadoValor != null && cbo != null)
+                    {
+                        cbo.SelectedItem = Convert.ToInt32(estadoValor);
+                    }
+                    else if (cbo != null)
+                    {
+                        cbo.SelectedIndex = -1;
                     }
 
                     if (btnGuardar != null)
@@ -221,6 +281,14 @@ namespace PetMarketView
                     MessageBox.Show($"Error al intentar eliminar: {ex.Message}", "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void cboEstadoId_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }

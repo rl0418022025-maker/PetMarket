@@ -39,7 +39,6 @@
             textApellido = new System.Windows.Forms.TextBox();
             textDUI = new System.Windows.Forms.TextBox();
             textCargo = new System.Windows.Forms.TextBox();
-            textEstadoId = new System.Windows.Forms.TextBox();
             btnGuardar = new System.Windows.Forms.Button();
             btnLimpiar = new System.Windows.Forms.Button();
             btnEliminar = new System.Windows.Forms.Button();
@@ -48,15 +47,16 @@
             txtTelefono = new System.Windows.Forms.TextBox();
             lblCorreo = new System.Windows.Forms.Label();
             txtCorreo = new System.Windows.Forms.TextBox();
+            comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(312, 29);
+            label1.Location = new System.Drawing.Point(357, 39);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(0, 15);
+            label1.Size = new System.Drawing.Size(0, 20);
             label1.TabIndex = 0;
             // 
             // textBox1
@@ -65,9 +65,10 @@
             textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             textBox1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             textBox1.ForeColor = System.Drawing.SystemColors.HotTrack;
-            textBox1.Location = new System.Drawing.Point(264, 12);
+            textBox1.Location = new System.Drawing.Point(272, 39);
+            textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textBox1.Name = "textBox1";
-            textBox1.Size = new System.Drawing.Size(258, 32);
+            textBox1.Size = new System.Drawing.Size(323, 40);
             textBox1.TabIndex = 1;
             textBox1.Text = "Gestión de Empleados";
             textBox1.TextChanged += textBox1_TextChanged;
@@ -75,94 +76,91 @@
             // lblNombre
             // 
             lblNombre.AutoSize = true;
-            lblNombre.Location = new System.Drawing.Point(64, 58);
+            lblNombre.Location = new System.Drawing.Point(70, 124);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new System.Drawing.Size(51, 15);
+            lblNombre.Size = new System.Drawing.Size(64, 20);
             lblNombre.TabIndex = 2;
             lblNombre.Text = "Nombre";
             // 
             // lblApellido
             // 
             lblApellido.AutoSize = true;
-            lblApellido.Location = new System.Drawing.Point(64, 99);
+            lblApellido.Location = new System.Drawing.Point(70, 175);
             lblApellido.Name = "lblApellido";
-            lblApellido.Size = new System.Drawing.Size(51, 15);
+            lblApellido.Size = new System.Drawing.Size(66, 20);
             lblApellido.TabIndex = 3;
             lblApellido.Text = "Apellido";
             // 
             // lblDUI
             // 
             lblDUI.AutoSize = true;
-            lblDUI.Location = new System.Drawing.Point(63, 132);
+            lblDUI.Location = new System.Drawing.Point(73, 231);
             lblDUI.Name = "lblDUI";
-            lblDUI.Size = new System.Drawing.Size(26, 15);
+            lblDUI.Size = new System.Drawing.Size(34, 20);
             lblDUI.TabIndex = 4;
             lblDUI.Text = "DUI";
             // 
             // lblCargo
             // 
             lblCargo.AutoSize = true;
-            lblCargo.Location = new System.Drawing.Point(421, 96);
+            lblCargo.Location = new System.Drawing.Point(480, 168);
             lblCargo.Name = "lblCargo";
-            lblCargo.Size = new System.Drawing.Size(39, 15);
+            lblCargo.Size = new System.Drawing.Size(49, 20);
             lblCargo.TabIndex = 5;
             lblCargo.Text = "Cargo";
             // 
             // lblEstadoId
             // 
             lblEstadoId.AutoSize = true;
-            lblEstadoId.Location = new System.Drawing.Point(421, 134);
+            lblEstadoId.Location = new System.Drawing.Point(480, 224);
             lblEstadoId.Name = "lblEstadoId";
-            lblEstadoId.Size = new System.Drawing.Size(52, 15);
+            lblEstadoId.Size = new System.Drawing.Size(67, 20);
             lblEstadoId.TabIndex = 6;
             lblEstadoId.Text = "EstadoId";
             // 
             // textNombre
             // 
-            textNombre.Location = new System.Drawing.Point(131, 50);
+            textNombre.Location = new System.Drawing.Point(150, 114);
+            textNombre.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textNombre.Name = "textNombre";
-            textNombre.Size = new System.Drawing.Size(136, 23);
+            textNombre.Size = new System.Drawing.Size(155, 27);
             textNombre.TabIndex = 7;
             // 
             // textApellido
             // 
-            textApellido.Location = new System.Drawing.Point(131, 88);
+            textApellido.Location = new System.Drawing.Point(150, 165);
+            textApellido.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textApellido.Name = "textApellido";
-            textApellido.Size = new System.Drawing.Size(136, 23);
+            textApellido.Size = new System.Drawing.Size(155, 27);
             textApellido.TabIndex = 8;
             textApellido.TextChanged += textApellido_TextChanged;
             // 
             // textDUI
             // 
-            textDUI.Location = new System.Drawing.Point(131, 126);
+            textDUI.Location = new System.Drawing.Point(150, 224);
+            textDUI.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textDUI.Name = "textDUI";
-            textDUI.Size = new System.Drawing.Size(136, 23);
+            textDUI.Size = new System.Drawing.Size(155, 27);
             textDUI.TabIndex = 9;
             textDUI.TextChanged += textDUI_TextChanged;
             // 
             // textCargo
             // 
-            textCargo.Location = new System.Drawing.Point(493, 88);
+            textCargo.Location = new System.Drawing.Point(565, 168);
+            textCargo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textCargo.Name = "textCargo";
-            textCargo.Size = new System.Drawing.Size(131, 23);
+            textCargo.Size = new System.Drawing.Size(149, 27);
             textCargo.TabIndex = 10;
             textCargo.TextChanged += textCargo_TextChanged;
-            // 
-            // textEstadoId
-            // 
-            textEstadoId.Location = new System.Drawing.Point(492, 126);
-            textEstadoId.Name = "textEstadoId";
-            textEstadoId.Size = new System.Drawing.Size(131, 23);
-            textEstadoId.TabIndex = 11;
-            textEstadoId.TextChanged += textEstadoId_TextChanged;
             // 
             // btnGuardar
             // 
             btnGuardar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnGuardar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnGuardar.Location = new System.Drawing.Point(417, 168);
+            btnGuardar.Location = new System.Drawing.Point(481, 281);
+            btnGuardar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new System.Drawing.Size(75, 33);
+            btnGuardar.Size = new System.Drawing.Size(86, 44);
             btnGuardar.TabIndex = 12;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = false;
@@ -172,9 +170,10 @@
             // 
             btnLimpiar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnLimpiar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnLimpiar.Location = new System.Drawing.Point(524, 168);
+            btnLimpiar.Location = new System.Drawing.Point(591, 281);
+            btnLimpiar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new System.Drawing.Size(75, 32);
+            btnLimpiar.Size = new System.Drawing.Size(86, 43);
             btnLimpiar.TabIndex = 13;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = false;
@@ -184,9 +183,10 @@
             // 
             btnEliminar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnEliminar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnEliminar.Location = new System.Drawing.Point(636, 168);
+            btnEliminar.Location = new System.Drawing.Point(703, 282);
+            btnEliminar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new System.Drawing.Size(75, 32);
+            btnEliminar.Size = new System.Drawing.Size(86, 43);
             btnEliminar.TabIndex = 14;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -195,50 +195,63 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new System.Drawing.Point(35, 231);
+            dataGridView1.Location = new System.Drawing.Point(40, 356);
+            dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new System.Drawing.Size(731, 207);
+            dataGridView1.Size = new System.Drawing.Size(835, 228);
             dataGridView1.TabIndex = 15;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // lblTelefono
             // 
             lblTelefono.AutoSize = true;
-            lblTelefono.Location = new System.Drawing.Point(61, 168);
+            lblTelefono.Location = new System.Drawing.Point(70, 284);
             lblTelefono.Name = "lblTelefono";
-            lblTelefono.Size = new System.Drawing.Size(53, 15);
+            lblTelefono.Size = new System.Drawing.Size(67, 20);
             lblTelefono.TabIndex = 16;
             lblTelefono.Text = "Telefono";
             // 
             // txtTelefono
             // 
-            txtTelefono.Location = new System.Drawing.Point(131, 160);
+            txtTelefono.Location = new System.Drawing.Point(150, 281);
+            txtTelefono.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtTelefono.Name = "txtTelefono";
-            txtTelefono.Size = new System.Drawing.Size(136, 23);
+            txtTelefono.Size = new System.Drawing.Size(155, 27);
             txtTelefono.TabIndex = 17;
             // 
             // lblCorreo
             // 
             lblCorreo.AutoSize = true;
-            lblCorreo.Location = new System.Drawing.Point(420, 58);
+            lblCorreo.Location = new System.Drawing.Point(475, 117);
             lblCorreo.Name = "lblCorreo";
-            lblCorreo.Size = new System.Drawing.Size(43, 15);
+            lblCorreo.Size = new System.Drawing.Size(54, 20);
             lblCorreo.TabIndex = 18;
             lblCorreo.Text = "Correo";
             // 
             // txtCorreo
             // 
-            txtCorreo.Location = new System.Drawing.Point(492, 50);
+            txtCorreo.Location = new System.Drawing.Point(565, 117);
+            txtCorreo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtCorreo.Name = "txtCorreo";
-            txtCorreo.Size = new System.Drawing.Size(132, 23);
+            txtCorreo.Size = new System.Drawing.Size(150, 27);
             txtCorreo.TabIndex = 19;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new System.Drawing.Point(563, 221);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new System.Drawing.Size(151, 28);
+            comboBox1.TabIndex = 20;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // FormEmpleado
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 450);
+            ClientSize = new System.Drawing.Size(914, 600);
+            Controls.Add(comboBox1);
             Controls.Add(txtCorreo);
             Controls.Add(lblCorreo);
             Controls.Add(txtTelefono);
@@ -247,7 +260,6 @@
             Controls.Add(btnEliminar);
             Controls.Add(btnLimpiar);
             Controls.Add(btnGuardar);
-            Controls.Add(textEstadoId);
             Controls.Add(textCargo);
             Controls.Add(textDUI);
             Controls.Add(textApellido);
@@ -259,6 +271,7 @@
             Controls.Add(lblNombre);
             Controls.Add(textBox1);
             Controls.Add(label1);
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             Name = "FormEmpleado";
             Text = "FormEmpleado";
             Load += FormEmpleado_Load;
@@ -280,7 +293,6 @@
         private System.Windows.Forms.TextBox textApellido;
         private System.Windows.Forms.TextBox textDUI;
         private System.Windows.Forms.TextBox textCargo;
-        private System.Windows.Forms.TextBox textEstadoId;
         private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnEliminar;
@@ -289,5 +301,6 @@
         private System.Windows.Forms.TextBox txtTelefono;
         private System.Windows.Forms.Label lblCorreo;
         private System.Windows.Forms.TextBox txtCorreo;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

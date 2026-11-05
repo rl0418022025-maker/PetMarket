@@ -1,32 +1,36 @@
-﻿using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class EstadoBL
     {
-        private readonly EstadoRepository _repository;
+        private readonly EstadoRepository _estadoRepository;
 
-        public EstadoBL(EstadoRepository repository)
+        public EstadoBL(EstadoRepository estadoRepository)
         {
-            _repository = repository;
+            _estadoRepository = estadoRepository;
         }
 
         public List<Estado> SelectAll()
         {
-            return _repository.SelectAll();
+            return _estadoRepository.SelectAll();
         }
 
-        public int Insert(Estado entity)
+        public int Insert(Estado estado)
         {
-            if (string.IsNullOrWhiteSpace(entity.Nombre))
-            {
-                throw new ArgumentException("El nombre del estado es obligatorio.");
-            }
+            return _estadoRepository.Insert(estado);
+        }
 
-            return _repository.Insert(entity);
+        public bool Update(Estado estado)
+        {
+            return _estadoRepository.Update(estado);
+        }
+
+        public bool Delete(int estadoId)
+        {
+            return _estadoRepository.Delete(estadoId);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -17,102 +17,95 @@ namespace PetMarket.DataAccess
 
         public List<Proveedor> SelectAll()
         {
-            List<Proveedor> result = new List<Proveedor>();
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Proveedor>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProveedorSelectAll", conn))
+                using (var command = new SqlCommand("spProveedorSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (dr.Read())
+                        int idOrd = reader.GetOrdinal("ProveedorId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int telOrd = reader.GetOrdinal("Telefono");
+                        int corOrd = reader.GetOrdinal("Correo");
+                        int dirOrd = reader.GetOrdinal("Direccion");
+                        int estOrd = reader.GetOrdinal("EstadoId");
+
+                        while (reader.Read())
                         {
-                            Proveedor entity = new Proveedor
+                            lista.Add(new Proveedor
                             {
-                                ProveedorId = dr.GetInt32(0),
-                                Nombre = dr.GetString(1),
-                                Telefono = dr.IsDBNull(2) ? string.Empty : dr.GetString(2),
-                                Correo = dr.IsDBNull(3) ? string.Empty : dr.GetString(3),
-                                Direccion = dr.IsDBNull(4) ? string.Empty : dr.GetString(4)
-                            };
-                            result.Add(entity);
+                                ProveedorId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Telefono = reader.IsDBNull(telOrd) ? string.Empty : reader.GetString(telOrd),
+                                Correo = reader.IsDBNull(corOrd) ? string.Empty : reader.GetString(corOrd),
+                                Direccion = reader.IsDBNull(dirOrd) ? string.Empty : reader.GetString(dirOrd),
+                                EstadoId = reader.GetInt32(estOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Proveedor entity)
+        public int Insert(Proveedor proveedor)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProveedorInsert", conn))
+                using (var command = new SqlCommand("spProveedorInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(entity.Telefono) ? (object)DBNull.Value : entity.Telefono);
-                    cmd.Parameters.AddWithValue("@Correo", string.IsNullOrEmpty(entity.Correo) ? (object)DBNull.Value : entity.Correo);
-                    cmd.Parameters.AddWithValue("@Direccion", string.IsNullOrEmpty(entity.Direccion) ? (object)DBNull.Value : entity.Direccion);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", proveedor.Nombre);
+                    command.Parameters.AddWithValue("@Telefono", (object)proveedor.Telefono ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Correo", (object)proveedor.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Direccion", (object)proveedor.Direccion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", proveedor.EstadoId);
 
-                    conn.Open();
-                    object scalar = cmd.ExecuteScalar();
-                    if (scalar != null && scalar != DBNull.Value)
-                    {
-                        result = Convert.ToInt32(scalar);
-                    }
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
                 }
             }
-
-            return result;
         }
 
-        public bool Update(Proveedor entity)
+        public bool Update(Proveedor proveedor)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProveedorUpdate", conn))
+                using (var command = new SqlCommand("spProveedorUpdate", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@ProveedorId", entity.ProveedorId);
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(entity.Telefono) ? (object)DBNull.Value : entity.Telefono);
-                    cmd.Parameters.AddWithValue("@Correo", string.IsNullOrEmpty(entity.Correo) ? (object)DBNull.Value : entity.Correo);
-                    cmd.Parameters.AddWithValue("@Direccion", string.IsNullOrEmpty(entity.Direccion) ? (object)DBNull.Value : entity.Direccion);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ProveedorId", proveedor.ProveedorId);
+                    command.Parameters.AddWithValue("@Nombre", proveedor.Nombre);
+                    command.Parameters.AddWithValue("@Telefono", (object)proveedor.Telefono ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Correo", (object)proveedor.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Direccion", (object)proveedor.Direccion ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", proveedor.EstadoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
 
-        public bool Delete(int id)
+        public bool Delete(int proveedorId)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spProveedorDelete", conn))
+                using (var command = new SqlCommand("spProveedorDelete", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@ProveedorId", id);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ProveedorId", proveedorId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
     }
 }

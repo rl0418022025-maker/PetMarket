@@ -48,59 +48,66 @@
             textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             textBox1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             textBox1.ForeColor = System.Drawing.SystemColors.HotTrack;
-            textBox1.Location = new System.Drawing.Point(272, 12);
+            textBox1.Location = new System.Drawing.Point(311, 16);
+            textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             textBox1.Name = "textBox1";
-            textBox1.Size = new System.Drawing.Size(203, 32);
+            textBox1.Size = new System.Drawing.Size(232, 40);
             textBox1.TabIndex = 0;
             textBox1.Text = "Gestión de Marca";
             // 
             // lblNombre
             // 
             lblNombre.AutoSize = true;
-            lblNombre.Location = new System.Drawing.Point(49, 61);
+            lblNombre.Location = new System.Drawing.Point(56, 81);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new System.Drawing.Size(51, 15);
+            lblNombre.Size = new System.Drawing.Size(64, 20);
             lblNombre.TabIndex = 1;
             lblNombre.Text = "Nombre";
             // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new System.Drawing.Point(49, 101);
+            lblDescripcion.Location = new System.Drawing.Point(56, 135);
             lblDescripcion.Name = "lblDescripcion";
-            lblDescripcion.Size = new System.Drawing.Size(69, 15);
+            lblDescripcion.Size = new System.Drawing.Size(87, 20);
             lblDescripcion.TabIndex = 2;
             lblDescripcion.Text = "Descripcion";
             // 
             // txtNombre
             // 
-            txtNombre.Location = new System.Drawing.Point(109, 60);
+            txtNombre.Location = new System.Drawing.Point(125, 80);
+            txtNombre.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new System.Drawing.Size(254, 23);
+            txtNombre.Size = new System.Drawing.Size(290, 27);
             txtNombre.TabIndex = 3;
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new System.Drawing.Point(125, 98);
+            txtDescripcion.Location = new System.Drawing.Point(143, 131);
+            txtDescripcion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new System.Drawing.Size(317, 23);
+            txtDescripcion.Size = new System.Drawing.Size(362, 27);
             txtDescripcion.TabIndex = 4;
             // 
             // dgvMarcas
             // 
             dgvMarcas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvMarcas.Location = new System.Drawing.Point(39, 181);
+            dgvMarcas.Location = new System.Drawing.Point(45, 241);
+            dgvMarcas.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             dgvMarcas.Name = "dgvMarcas";
-            dgvMarcas.Size = new System.Drawing.Size(702, 150);
+            dgvMarcas.RowHeadersWidth = 51;
+            dgvMarcas.Size = new System.Drawing.Size(802, 200);
             dgvMarcas.TabIndex = 5;
+            dgvMarcas.CellContentClick += dgvMarcas_CellContentClick;
             // 
             // btnGuardar
             // 
             btnGuardar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnGuardar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnGuardar.Location = new System.Drawing.Point(448, 68);
+            btnGuardar.Location = new System.Drawing.Point(512, 91);
+            btnGuardar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new System.Drawing.Size(75, 35);
+            btnGuardar.Size = new System.Drawing.Size(86, 47);
             btnGuardar.TabIndex = 6;
             btnGuardar.Text = "Guardar";
             btnGuardar.UseVisualStyleBackColor = false;
@@ -110,9 +117,10 @@
             // 
             btnLimpiar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnLimpiar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnLimpiar.Location = new System.Drawing.Point(548, 68);
+            btnLimpiar.Location = new System.Drawing.Point(626, 91);
+            btnLimpiar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new System.Drawing.Size(75, 35);
+            btnLimpiar.Size = new System.Drawing.Size(86, 47);
             btnLimpiar.TabIndex = 7;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -123,9 +131,10 @@
             // 
             btnEliminar.BackColor = System.Drawing.SystemColors.HotTrack;
             btnEliminar.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            btnEliminar.Location = new System.Drawing.Point(645, 68);
+            btnEliminar.Location = new System.Drawing.Point(737, 91);
+            btnEliminar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new System.Drawing.Size(75, 33);
+            btnEliminar.Size = new System.Drawing.Size(86, 44);
             btnEliminar.TabIndex = 8;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = false;
@@ -134,25 +143,26 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new System.Drawing.Point(54, 140);
+            lblEstado.Location = new System.Drawing.Point(62, 187);
             lblEstado.Name = "lblEstado";
-            lblEstado.Size = new System.Drawing.Size(42, 15);
+            lblEstado.Size = new System.Drawing.Size(54, 20);
             lblEstado.TabIndex = 9;
             lblEstado.Text = "Estado";
             // 
             // cboEstado
             // 
             cboEstado.FormattingEnabled = true;
-            cboEstado.Location = new System.Drawing.Point(109, 132);
+            cboEstado.Location = new System.Drawing.Point(125, 176);
+            cboEstado.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             cboEstado.Name = "cboEstado";
-            cboEstado.Size = new System.Drawing.Size(121, 23);
+            cboEstado.Size = new System.Drawing.Size(138, 28);
             cboEstado.TabIndex = 10;
             // 
             // FormMarca
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 450);
+            ClientSize = new System.Drawing.Size(914, 600);
             Controls.Add(cboEstado);
             Controls.Add(lblEstado);
             Controls.Add(btnEliminar);
@@ -164,6 +174,7 @@
             Controls.Add(lblDescripcion);
             Controls.Add(lblNombre);
             Controls.Add(textBox1);
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             Name = "FormMarca";
             Text = "FormMarca";
             Load += FormMarca_Load;

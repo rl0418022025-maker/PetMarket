@@ -1,65 +1,36 @@
-﻿using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class MetodoPagoBL
     {
-        private readonly MetodoPagoRepository _repository;
+        private readonly MetodoPagoRepository _metodoPagoRepository;
 
-        public MetodoPagoBL(MetodoPagoRepository repository)
+        public MetodoPagoBL(MetodoPagoRepository metodoPagoRepository)
         {
-            _repository = repository;
+            _metodoPagoRepository = metodoPagoRepository;
         }
 
         public List<MetodoPago> SelectAll()
         {
-            try
-            {
-                return _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _metodoPagoRepository.SelectAll();
         }
 
-        public int Insert(MetodoPago entity)
+        public int Insert(MetodoPago metodoPago)
         {
-            try
-            {
-                return _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _metodoPagoRepository.Insert(metodoPago);
         }
 
-        public bool Update(MetodoPago entity)
+        public bool Update(MetodoPago metodoPago)
         {
-            try
-            {
-                return _repository.Update(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _metodoPagoRepository.Update(metodoPago);
         }
 
-        public bool Delete(int id)
+        public bool Delete(int metodoPagoId)
         {
-            try
-            {
-                return _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _metodoPagoRepository.Delete(metodoPagoId);
         }
     }
 }

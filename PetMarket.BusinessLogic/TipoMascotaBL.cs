@@ -1,22 +1,36 @@
-﻿using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class TipoMascotaBL
     {
-        private readonly TipoMascotaRepository _repository;
+        private readonly TipoMascotaRepository _tipoMascotaRepository;
 
-        public TipoMascotaBL(TipoMascotaRepository repository)
+        public TipoMascotaBL(TipoMascotaRepository tipoMascotaRepository)
         {
-            _repository = repository;
+            _tipoMascotaRepository = tipoMascotaRepository;
         }
 
-        public List<TipoMascota> SelectAll() => _repository.SelectAll();
+        public List<TipoMascota> SelectAll()
+        {
+            return _tipoMascotaRepository.SelectAll();
+        }
 
-        public int Insert(TipoMascota entity) => _repository.Insert(entity);
+        public int Insert(TipoMascota tipoMascota)
+        {
+            return _tipoMascotaRepository.Insert(tipoMascota);
+        }
 
-        public int Delete(int tipoMascotaId) => _repository.Delete(tipoMascotaId);
+        public bool Update(TipoMascota tipoMascota)
+        {
+            return _tipoMascotaRepository.Update(tipoMascota);
+        }
+
+        public bool Delete(int tipoMascotaId)
+        {
+            return _tipoMascotaRepository.Delete(tipoMascotaId);
+        }
     }
 }

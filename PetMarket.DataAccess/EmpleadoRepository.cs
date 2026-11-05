@@ -1,9 +1,8 @@
-﻿using Entities;
-using Microsoft.Data.SqlClient;
-using PetMarket.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using PetMarket.Entities;
 
 namespace PetMarket.DataAccess
 {
@@ -18,100 +17,103 @@ namespace PetMarket.DataAccess
 
         public List<Empleado> SelectAll()
         {
-            List<Empleado> result = new List<Empleado>();
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            var lista = new List<Empleado>();
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEmpleadoSelectAll", conn))
+                using (var command = new SqlCommand("spEmpleadoSelectAll", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-
-                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.SingleResult))
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (dr.Read())
-                        {
-                            Empleado entity = new Empleado();
-                            entity.EmpleadoId = dr.GetInt32(dr.GetOrdinal("EmpleadoId"));
-                            entity.Nombre = dr.GetString(dr.GetOrdinal("Nombre"));
-                            entity.Apellido = dr.GetString(dr.GetOrdinal("Apellido"));
-                            entity.DUI = dr.GetString(dr.GetOrdinal("DUI"));
-                            entity.Cargo = dr.GetString(dr.GetOrdinal("Cargo"));
-                            entity.EstadoId = dr.GetInt32(dr.GetOrdinal("EstadoId"));
+                        int idOrd = reader.GetOrdinal("EmpleadoId");
+                        int nomOrd = reader.GetOrdinal("Nombre");
+                        int apeOrd = reader.GetOrdinal("Apellido");
+                        int duiOrd = reader.GetOrdinal("DUI");
+                        int telOrd = reader.GetOrdinal("Telefono");
+                        int corOrd = reader.GetOrdinal("Correo");
+                        int carOrd = reader.GetOrdinal("Cargo");
+                        int estOrd = reader.GetOrdinal("EstadoId");
 
-                            result.Add(entity);
+                        while (reader.Read())
+                        {
+                            lista.Add(new Empleado
+                            {
+                                EmpleadoId = reader.GetInt32(idOrd),
+                                Nombre = reader.GetString(nomOrd),
+                                Apellido = reader.GetString(apeOrd),
+                                DUI = reader.IsDBNull(duiOrd) ? string.Empty : reader.GetString(duiOrd),
+                                Telefono = reader.IsDBNull(telOrd) ? string.Empty : reader.GetString(telOrd),
+                                Correo = reader.IsDBNull(corOrd) ? string.Empty : reader.GetString(corOrd),
+                                Cargo = reader.IsDBNull(carOrd) ? string.Empty : reader.GetString(carOrd),
+                                EstadoId = reader.GetInt32(estOrd)
+                            });
                         }
                     }
                 }
             }
-
-            return result;
+            return lista;
         }
 
-        public int Insert(Empleado entity)
+        public int Insert(Empleado empleado)
         {
-            int result = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEmpleadoInsert", conn))
+                using (var command = new SqlCommand("spEmpleadoInsert", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Apellido", entity.Apellido);
-                    cmd.Parameters.AddWithValue("@DUI", entity.DUI);
-                    cmd.Parameters.AddWithValue("@Cargo", entity.Cargo);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Nombre", empleado.Nombre);
+                    command.Parameters.AddWithValue("@Apellido", empleado.Apellido);
+                    command.Parameters.AddWithValue("@DUI", (object)empleado.DUI ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Telefono", (object)empleado.Telefono ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Correo", (object)empleado.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Cargo", (object)empleado.Cargo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", empleado.EstadoId);
 
-                    conn.Open();
-                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0;
                 }
             }
-
-            return result;
         }
 
-        public bool Update(Empleado entity)
+        public bool Update(Empleado empleado)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEmpleadoUpdate", conn))
+                using (var command = new SqlCommand("spEmpleadoUpdate", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@EmpleadoId", entity.EmpleadoId);
-                    cmd.Parameters.AddWithValue("@Nombre", entity.Nombre);
-                    cmd.Parameters.AddWithValue("@Apellido", entity.Apellido);
-                    cmd.Parameters.AddWithValue("@DUI", entity.DUI);
-                    cmd.Parameters.AddWithValue("@Cargo", entity.Cargo);
-                    cmd.Parameters.AddWithValue("@EstadoId", entity.EstadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EmpleadoId", empleado.EmpleadoId);
+                    command.Parameters.AddWithValue("@Nombre", empleado.Nombre);
+                    command.Parameters.AddWithValue("@Apellido", empleado.Apellido);
+                    command.Parameters.AddWithValue("@DUI", (object)empleado.DUI ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Telefono", (object)empleado.Telefono ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Correo", (object)empleado.Correo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Cargo", (object)empleado.Cargo ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@EstadoId", empleado.EstadoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
 
         public bool Delete(int empleadoId)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = _connectionFactory.CreateConnection())
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                using (SqlCommand cmd = new SqlCommand("spEmpleadoDelete", conn))
+                using (var command = new SqlCommand("spEmpleadoDelete", connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@EmpleadoId", empleadoId);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EmpleadoId", empleadoId);
 
-                    conn.Open();
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int filas = command.ExecuteNonQuery();
+                    return filas > 0;
                 }
             }
-
-            return rowsAffected > 0;
         }
     }
 }

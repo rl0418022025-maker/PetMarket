@@ -1,78 +1,36 @@
-﻿using Entities;
-using PetMarket.DataAccess;
+﻿using System.Collections.Generic;
 using PetMarket.Entities;
-using System;
-using System.Collections.Generic;
+using PetMarket.DataAccess;
 
 namespace PetMarket.BusinessLogic
 {
     public class RolBL
     {
-        private readonly RolRepository _repository;
+        private readonly RolRepository _rolRepository;
 
-        public RolBL(RolRepository repository)
+        public RolBL(RolRepository rolRepository)
         {
-            _repository = repository;
+            _rolRepository = rolRepository;
         }
 
         public List<Rol> SelectAll()
         {
-            List<Rol> result = null;
-            try
-            {
-                result = _repository.SelectAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _rolRepository.SelectAll();
         }
 
-        public int Insert(Rol entity)
+        public int Insert(Rol rol)
         {
-            int result;
-            try
-            {
-                result = _repository.Insert(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _rolRepository.Insert(rol);
         }
 
-        public bool Update(Rol entity)
+        public bool Update(Rol rol)
         {
-            bool result;
-            try
-            {
-                result = _repository.Update(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _rolRepository.Update(rol);
         }
 
-        public bool Delete(int id)
+        public bool Delete(int rolId)
         {
-            bool result;
-            try
-            {
-                result = _repository.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return result;
+            return _rolRepository.Delete(rolId);
         }
     }
 }
